@@ -2,14 +2,22 @@
 
 Generates an artifact for birthday
 
-## First run
+## Install steps
 
 ```
 pip3 install -r requirements.txt
 ```
 
+> Install mongo
+
 ## For developemnt run
 
+### Run mongo
+```
+mongod
+```
+
+### Run engine
 ```
 python engine.py
 ```
