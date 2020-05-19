@@ -4,18 +4,27 @@ from flask import jsonify
 from pymongo import MongoClient
 from pprint import pprint
 from time import time
+import random
+import json
 
 app = Flask(__name__)
 
+secret = {}
+try:
+    json.loads(open('credential.json').read())
+except FileNotFoundError as err:
+    print('FileNotFoundError')
+    secret['host'] = 'localhost'
+    secret['port'] = '27017'
+    secret['db'] = 'creativeengine'
 
-# connect to MongoDB, change the << MONGODB URL >> to reflect your own connection string
-connection = MongoClient('mongodb://localhost:27017/creativeengine')
+connection = MongoClient('mongodb://{host}:{port}/{db}'.format(host=secret['host'], port=secret['port'], db=secret['db']))
 def dbInit():
     try:
         dbnames = connection.list_database_names()
-        if 'engine' not in dbnames:
-            db_api = connection.engine.releaseinfo
-            db_api.insert( {
+        if secret['db'] not in dbnames:
+            db_api = connection[secret['db']].releaseinfo
+            db_api.insert_one({
                 "Author1":"Ayushi Rathod",
                 "Author2":"Prateek Rokadiya",
                 "buildtime": str(time()),
@@ -26,19 +35,63 @@ def dbInit():
         else:
             print ("Database already Initialized!")
     except:
-        print ("Database creation failed!!")
+        print ("Database creation Failed!!")
 
 @app.route('/genlink', methods = ['POST'])
 def genlink():
     if request.method == 'POST':
         data = request.get_json()
-        output = ""
+        uniqueLink = ""
+        mongoId = ""
         if data is not None:
-            output = data['name']
-            # Create a link
-            # Add to db
-            # send back page link
-        return jsonify({"res": output})
+            bdayEmail = data['bday_email']
+            bdayName = data['bday_name']
+            urlPhotoBday = data['bday_photo']
+            
+            userName = data['name_user']
+            greetingText = data['greeting']
+            urlPhotoUser = data['photo_user']
+
+            uniqueInfo = connection[secret['db']].bdayusers.find_one({
+                "email" : bdayEmail
+            })
+
+            if uniqueInfo is None:
+                uniqueLink = str(bdayEmail).split('@')[0]
+                bdayInfo = connection[secret['db']].bdayusers.insert_one({
+                    "email" : bdayEmail,
+                    "name" : bdayName,
+                    "url" : urlPhotoBday,
+                    "unilink" : uniqueLink
+                })
+                mongoId = bdayInfo.inserted_id
+
+            if uniqueInfo is not None:
+                return jsonify({"link": uniqueInfo["unilink"]})
+
+            connection[secret['db']].bdayusers.insert_one({
+                "bday_id": mongoId,
+                "name": userName,
+                "text": greetingText,
+                "url_bday": urlPhotoBday,
+                "url_user": urlPhotoUser
+            })
+
+        return jsonify({"unilink": uniqueLink})
+
+
+@app.route('/bday/<unilink>')
+def bday(uniqueLink):
+    # Allows creation of new link
+    uniqueInfo = connection[secret['db']].bdayusers.find_one({
+        "unilink" : uniqueLink
+    })
+    if uniqueInfo is None:
+        return app.send_static_file('index.html')
+
+    return app.send_static_file('index.html?bday={}'.format(uniqueLink))
+    
+
 
 @app.route('/')
 def index():

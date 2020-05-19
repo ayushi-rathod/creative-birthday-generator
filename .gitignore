@@ -130,6 +130,7 @@ dmypy.json
 
 # blog
 blog.md
+bug.py
 
 # credentials
 credentials.json
