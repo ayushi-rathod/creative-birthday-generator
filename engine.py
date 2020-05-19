@@ -66,17 +66,17 @@ def genlink():
                 })
                 mongoId = bdayInfo.inserted_id
 
-            if uniqueInfo is not None:
-                return jsonify({"link": uniqueInfo["unilink"]})
-
             connection[secret['db']].bdayusers.insert_one({
-                "bday_id": mongoId,
+                "unilink": uniqueLink,
+                "bday_email": bdayEmail,
                 "name": userName,
                 "text": greetingText,
                 "url_bday": urlPhotoBday,
                 "url_user": urlPhotoUser
             })
 
+            # if uniqueInfo is not None:
+            #     return jsonify({"link": uniqueInfo["unilink"]})
         return jsonify({"unilink": uniqueLink})
 
 
@@ -89,6 +89,31 @@ def unique(uniqueLink):
     if uniqueInfo is None:
         return index()
     return app.send_static_file('index.html?bday={}'.format(uniqueLink))
+
+@app.route('/bday/<unilink>', methods = ['POST'])
+def saveData(uniqueLink):
+    if request.method == 'POST':
+        data = request.get_json()
+        if data is not None:
+            bdayEmail = data['bday_email']
+            urlPhotoBday = data['bday_photo']
+            
+            userName = data['name_user']
+            greetingText = data['greeting']
+            urlPhotoUser = data['photo_user']
+
+            connection[secret['db']].bdayusers.insert_one({
+                "unilink": uniqueLink,
+                "bday_email": bdayEmail,
+                "name": userName,
+                "text": greetingText,
+                "url_bday": urlPhotoBday,
+                "url_user": urlPhotoUser
+            })
+
+            return jsonify({"unilink": uniqueLink})
+
+
 
 @app.route('/')
 def index():
