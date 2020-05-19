@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import request
 from flask import jsonify
+import pymongo
 
 app = Flask(__name__)
 
@@ -18,6 +19,7 @@ def genlink():
 
 @app.route('/')
 def index():
+    # Allows creation of new link
     return app.send_static_file('index.html')
 
 if __name__ == '__main__':
