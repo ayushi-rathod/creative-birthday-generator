@@ -11,7 +11,7 @@ app = Flask(__name__)
 
 secret = {}
 try:
-    json.loads(open('credential.json').read())
+    secret = json.loads(open('credentials.json').read())
 except FileNotFoundError as err:
     print('FileNotFoundError')
     secret['host'] = 'localhost'
@@ -42,7 +42,6 @@ def genlink():
     if request.method == 'POST':
         data = request.get_json()
         uniqueLink = ""
-        mongoId = ""
         if data is not None:
             bdayEmail = data['bday_email']
             bdayName = data['bday_name']
@@ -64,7 +63,6 @@ def genlink():
                     "url" : urlPhotoBday,
                     "unilink" : uniqueLink
                 })
-                mongoId = bdayInfo.inserted_id
 
             connection[secret['db']].bdayusers.insert_one({
                 "unilink": uniqueLink,
