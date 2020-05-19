@@ -81,17 +81,14 @@ def genlink():
 
 
 @app.route('/bday/<unilink>')
-def bday(uniqueLink):
+def unique(uniqueLink):
     # Allows creation of new link
     uniqueInfo = connection[secret['db']].bdayusers.find_one({
         "unilink" : uniqueLink
     })
     if uniqueInfo is None:
-        return app.send_static_file('index.html')
-
+        return index()
     return app.send_static_file('index.html?bday={}'.format(uniqueLink))
-    
-
 
 @app.route('/')
 def index():
