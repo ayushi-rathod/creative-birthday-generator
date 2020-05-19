@@ -16,10 +16,9 @@ def genlink():
             # send back page link
         return jsonify({"res": output})
 
-@app.route('/', methods = ['GET'])
+@app.route('/')
 def index():
-    if request.method == 'GET':
-        return app.send_static_file('index.html')
+    return app.send_static_file('index.html')
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5001)
