@@ -1,2 +1,2 @@
-# creative-birthday-generator
+# creative-engine
 Generates a birthday artifact
