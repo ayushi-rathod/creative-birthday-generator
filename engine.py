@@ -1,6 +1,7 @@
 from flask import Flask
 from flask import request
 from flask import jsonify
+from flask import Response
 from pymongo import MongoClient
 from pprint import pprint
 from time import time
@@ -39,77 +40,83 @@ def dbInit():
 
 @app.route('/genlink', methods = ['POST'])
 def genlink():
+    uniqueLink = ""
     if request.method == 'POST':
-        data = request.get_json()
-        uniqueLink = ""
+        data = json.loads(request.data)
+        # pprint(data)
         if data is not None:
-            bdayEmail = data['bday_email']
             bdayName = data['bday_name']
+            bdayEmail = data['bday_email']
+            bdayDate = data['bday_date']
             urlPhotoBday = data['bday_photo']
-            
-            userName = data['name_user']
-            greetingText = data['greeting']
-            urlPhotoUser = data['photo_user']
 
+            userName = data['user_name']
+            userEmail = data["user_email"]
+            greetingText = data['greeting']
+            urlPhotoUser = data['user_photo']
+            
             uniqueInfo = connection[secret['db']].bdayusers.find_one({
                 "email" : bdayEmail
             })
 
             if uniqueInfo is None:
                 uniqueLink = str(bdayEmail).split('@')[0]
-                bdayInfo = connection[secret['db']].bdayusers.insert_one({
-                    "email" : bdayEmail,
+                print('Print uniqueLink: ', uniqueLink)
+                connection[secret['db']].bdayusers.insert_one({
+                    "unilink" : uniqueLink,
                     "name" : bdayName,
-                    "url" : urlPhotoBday,
-                    "unilink" : uniqueLink
+                    "email" : bdayEmail,
+                    "date" : bdayDate,
+                    "url" : urlPhotoBday
                 })
 
-            connection[secret['db']].bdayusers.insert_one({
+            if uniqueInfo is not None:
+                return Response(json.dumps({'unilink':uniqueInfo['unilink']}), status=201, mimetype='application/json')
+
+            connection[secret['db']].users.insert_one({
                 "unilink": uniqueLink,
-                "bday_email": bdayEmail,
                 "name": userName,
+                "email": userEmail,
                 "text": greetingText,
                 "url_bday": urlPhotoBday,
                 "url_user": urlPhotoUser
             })
 
-            # if uniqueInfo is not None:
-            #     return jsonify({"link": uniqueInfo["unilink"]})
-        return jsonify({"unilink": uniqueLink})
+    return jsonify({"unilink": uniqueLink})
 
 
 @app.route('/bday/<unilink>')
-def unique(uniqueLink):
+def unique(unilink):
     # Allows creation of new link
     uniqueInfo = connection[secret['db']].bdayusers.find_one({
-        "unilink" : uniqueLink
+        "unilink" : unilink
     })
     if uniqueInfo is None:
         return index()
-    return app.send_static_file('index.html?bday={}'.format(uniqueLink))
+    return app.send_static_file('index.html?bday={}'.format(unilink))
 
 @app.route('/bday/<unilink>', methods = ['POST'])
-def saveData(uniqueLink):
+def saveData(unilink):
     if request.method == 'POST':
+        # pprint(request)
         data = request.get_json()
         if data is not None:
-            bdayEmail = data['bday_email']
             urlPhotoBday = data['bday_photo']
             
-            userName = data['name_user']
+            userEmail = data['user_email']
+            userName = data['user_name']
             greetingText = data['greeting']
-            urlPhotoUser = data['photo_user']
+            urlPhotoUser = data['user_photo']
 
             connection[secret['db']].bdayusers.insert_one({
-                "unilink": uniqueLink,
-                "bday_email": bdayEmail,
+                "unilink": unilink,
                 "name": userName,
+                "email": userEmail,
                 "text": greetingText,
                 "url_bday": urlPhotoBday,
                 "url_user": urlPhotoUser
             })
-
-            return jsonify({"unilink": uniqueLink})
+    return jsonify({"unilink": unilink})
 
 
 
