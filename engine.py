@@ -7,6 +7,7 @@ from pprint import pprint
 from time import time
 import random
 import json
+from connection import Connections
 
 app = Flask(__name__)
 
@@ -40,6 +41,7 @@ def dbInit():
 
 @app.route('/genlink', methods = ['POST'])
 def genlink():
+    conn = Connections(connection)
     uniqueLink = ""
     if request.method == 'POST':
         data = json.loads(request.data)
@@ -54,71 +56,48 @@ def genlink():
             userEmail = data["user_email"]
             greetingText = data['greeting']
             urlPhotoUser = data['user_photo']
-            
-            uniqueInfo = connection[secret['db']].bdayusers.find_one({
-                "email" : bdayEmail
-            })
+
+            uniqueInfo = conn.findBdayUserByEmail(bdayEmail)
 
             if uniqueInfo is None:
                 uniqueLink = str(bdayEmail).split('@')[0]
-                print('Print uniqueLink: ', uniqueLink)
-                connection[secret['db']].bdayusers.insert_one({
-                    "unilink" : uniqueLink,
-                    "name" : bdayName,
-                    "email" : bdayEmail,
-                    "date" : bdayDate,
-                    "url" : urlPhotoBday
-                })
+                print('Print uniqueLink: ', uniqueLink, bdayEmail)
+                conn.addBdayUser(uniqueLink, bdayName, bdayEmail, bdayDate, urlPhotoBday)
 
             if uniqueInfo is not None:
                 return Response(json.dumps({'unilink':uniqueInfo['unilink']}), status=201, mimetype='application/json')
 
-            connection[secret['db']].users.insert_one({
-                "unilink": uniqueLink,
-                "name": userName,
-                "email": userEmail,
-                "text": greetingText,
-                "url_bday": urlPhotoBday,
-                "url_user": urlPhotoUser
-            })
+            conn.addUser(uniqueLink, userName, userEmail, greetingText, urlPhotoBday, urlPhotoUser)
 
     return jsonify({"unilink": uniqueLink})
-
 
 @app.route('/bday/<unilink>')
 def unique(unilink):
     # Allows creation of new link
-    uniqueInfo = connection[secret['db']].bdayusers.find_one({
-        "unilink" : unilink
-    })
+    conn = Connections(connection)
+    uniqueInfo = conn.findBdayUserByLink(unilink)
+
     if uniqueInfo is None:
         return index()
     return app.send_static_file('index.html?bday={}'.format(unilink))
 
 @app.route('/bday/<unilink>', methods = ['POST'])
 def saveData(unilink):
+    conn = Connections(connection)
     if request.method == 'POST':
         # pprint(request)
         data = request.get_json()
         if data is not None:
             urlPhotoBday = data['bday_photo']
-            
+
             userEmail = data['user_email']
             userName = data['user_name']
             greetingText = data['greeting']
             urlPhotoUser = data['user_photo']
 
-            connection[secret['db']].bdayusers.insert_one({
-                "unilink": unilink,
-                "name": userName,
-                "email": userEmail,
-                "text": greetingText,
-                "url_bday": urlPhotoBday,
-                "url_user": urlPhotoUser
-            })
+            conn.addUser(unilink, userName, userEmail, greetingText, urlPhotoBday, urlPhotoUser)
+
     return jsonify({"unilink": unilink})
-
-
 
 @app.route('/')
 def index():
