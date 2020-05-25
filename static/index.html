@@ -1,36 +1,93 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset='utf-8'>
-    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>Birthday Artifact</title>
-    <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <link rel='stylesheet' type='text/css' media='screen' href='main.css'>
-    <script src='main.js'></script>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-</head>
-<body>
-<div class="jumbotron text-center">
-  <h1>Creative Engine</h1>
-  <p>Create an amazing Birthday card with all your wishes!</p>
-</div>
+   <head>
+      <meta charset='utf-8'>
+      <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+      <title>Birthday Artifact</title>
+      <meta name='viewport' content='width=device-width, initial-scale=1'>
+{#      <link rel='stylesheet' type='text/css' href='main.css'>#}
+      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+      <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+   </head>
+   <body>
+      <div class="jumbotron text-center">
+         <h1>Creative Engine</h1>
+         <p>Create an amazing Birthday card with all your wishes!</p>
+      </div>
+      <div class="container-fluid">
 
-<div class="container">
-  <div class="row center">
-      <h2>So Who's Birthday it is??</h2>
-  </div>
-    <div class="row center">
-     <form>
-  <div class="form-group">
-    <label for="exampleInputEmail1">Name</label>
-    <input type="text" class="form-control" id="InputName" placeholder="Enter Name">
-  </div>
-  <button type="submit" class="btn btn-primary">Generate Link</button>
-</form>
-    </div>
-</div>
-</body>
+         <div class="row">
+            <form class="form" id="initial-bday-form" style="display: contents" method="post">
+                <input type="hidden" value="">
+               <div class="col float-left">
+                   <div class="row">
+                        <h2 class="float-left">So Who's Birthday it is??</h2>
+                    </div>
+                  <div class="form-group">
+                     <label for="bday_name">Full Name</label>
+                     <input type="text" class="form-control" id="bday_name" placeholder="Enter Full Name">
+                  </div>
+                  <div class="form-group">
+                     <label for="bday_email">Email</label>
+                     <input type="text" class="form-control" id="bday_email" placeholder="Email Address  ">
+                  </div>
+                  <div class="form-group">
+                     <label for="bday_date">Birth Date</label>
+                     <input type="text" class="form-control" id="bday_date" placeholder="MM/DD/YYYY">
+                  </div>
+                  <div class="form-group">
+                     <img id="bday_photo" src="" width="150" height="150">
+                  </div>
+               </div>
+               <div class="col float-right">
+                   <div class="row">
+                        <h2 class="float-left">Tell me about you!!</h2>
+                    </div>
+                  <div class="form-group">
+                     <label for="user_name">Your Name</label>
+                     <input type="text" class="form-control" id="user_name" placeholder="Enter Your Name">
+                  </div>
+                  <div class="form-group">
+                     <label for="user_email">Your Email</label>
+                     <input type="text" class="form-control" id="bday_email" placeholder="Email Your Address  ">
+                  </div>
+                   <div class="form-group">
+                     <label for="user_greetings">Your Message</label>
+                     <input type="text" class="form-control" id="user_greetings" placeholder="Enter your birthday wishes">
+                  </div>
+                  <div class="form-group">
+                     <img id=user_photo"" src="" width="150" height="150">
+                  </div>
+                   <div class="form-group">
+                       <button type="submit" class="btn btn-primary" id="submitButtonId">Submit</button>
+                   </div>
+               </div>
+            </form>
+         </div>
+      </div>
+   <script type="text/javascript">
+       $(document).ready(function() {
+           $("#submitButtonId").click(function () {
+
+               var settings = {
+                  "url": "http://127.0.0.1:5001/genlink",
+                  "method": "POST",
+                  "timeout": 0,
+                  "headers": {
+                    "Content-Type": "application/json"
+                  },
+                  "data": JSON.stringify({"bday_email":"ayushi@gmail.com","bday_name":"Ayshi@gmail","bday_date":"99/99/9999","bday_photo":"http://www.s3bucket.com/abc.jpg","user_name":"Prateek Rok","user_email":"prateek@gmail.com","greeting":"Happy Birthday!","user_photo":"http://www.s3bucket.com/xyz.jpg"}),
+                };
+
+                $.ajax(settings).done(function (response) {
+                  console.log(response);
+                });
+           });
+       });
+   </script>
+   </body>
+
 </html>
