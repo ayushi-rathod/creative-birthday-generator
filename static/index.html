@@ -5,22 +5,27 @@
       <meta http-equiv='X-UA-Compatible' content='IE=edge'>
       <title>Birthday Artifact</title>
       <meta name='viewport' content='width=device-width, initial-scale=1'>
-{#      <link rel='stylesheet' type='text/css' href='main.css'>#}
+      <!--<link rel='stylesheet' type='text/css' href='main.css'>-->
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
       <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
       <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
       <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+      <link class="jsbin" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
+      <script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+      <script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js"></script>
    </head>
    <body>
       <div class="jumbotron text-center">
          <h1>Creative Engine</h1>
          <p>Create an amazing Birthday card with all your wishes!</p>
+          <a href="">abc</a>
       </div>
       <div class="container-fluid">
 
          <div class="row">
-            <form class="form" id="initial-bday-form" style="display: contents" method="post">
+            <form class="form" id="initial-bday-form" style="display: contents" method="post"  enctype="multipart/form-data">
                 <input type="hidden" value="">
                <div class="col float-left">
                    <div class="row">
@@ -28,19 +33,22 @@
                     </div>
                   <div class="form-group">
                      <label for="bday_name">Full Name</label>
-                     <input type="text" class="form-control" id="bday_name" placeholder="Enter Full Name">
+                     <input type="text" class="form-control" id="bday_name" placeholder="Enter Full Name" required>
                   </div>
                   <div class="form-group">
                      <label for="bday_email">Email</label>
-                     <input type="text" class="form-control" id="bday_email" placeholder="Email Address  ">
+                     <input type="text" class="form-control" id="bday_email" placeholder="Email Address" required>
                   </div>
                   <div class="form-group">
                      <label for="bday_date">Birth Date</label>
-                     <input type="text" class="form-control" id="bday_date" placeholder="MM/DD/YYYY">
+                     <input type="text" class="form-control" id="bday_date" placeholder="MM/DD/YYYY" required>
                   </div>
                   <div class="form-group">
-                     <img id="bday_photo" src="" width="150" height="150">
+                      <input type="file" name="fileToUpload" id="bday_photo" accept="image/gif, image/jpeg, image/png" onchange="readURL(this)">
                   </div>
+                   <div class="form-group">
+                       <img id="image-display" src="" width="150" height="150"/>
+                   </div>
                </div>
                <div class="col float-right">
                    <div class="row">
@@ -48,18 +56,18 @@
                     </div>
                   <div class="form-group">
                      <label for="user_name">Your Name</label>
-                     <input type="text" class="form-control" id="user_name" placeholder="Enter Your Name">
+                     <input type="text" class="form-control" id="user_name" placeholder="Enter Your Name" required>
                   </div>
                   <div class="form-group">
                      <label for="user_email">Your Email</label>
-                     <input type="text" class="form-control" id="bday_email" placeholder="Email Your Address  ">
+                     <input type="text" class="form-control" id="bday_email" placeholder="Email Your Address" required>
                   </div>
                    <div class="form-group">
                      <label for="user_greetings">Your Message</label>
                      <input type="text" class="form-control" id="user_greetings" placeholder="Enter your birthday wishes">
                   </div>
                   <div class="form-group">
-                     <img id=user_photo"" src="" width="150" height="150">
+                     <img id="user_photo" src="" width="150" height="150">
                   </div>
                    <div class="form-group">
                        <button type="submit" class="btn btn-primary" id="submitButtonId">Submit</button>
@@ -70,8 +78,7 @@
       </div>
    <script type="text/javascript">
        $(document).ready(function() {
-           $("#submitButtonId").click(function () {
-
+            $("#submitButtonId").click(function () {
                var settings = {
                   "url": "http://127.0.0.1:5001/genlink",
                   "method": "POST",
@@ -79,14 +86,31 @@
                   "headers": {
                     "Content-Type": "application/json"
                   },
-                  "data": JSON.stringify({"bday_email":"ayushi@gmail.com","bday_name":"Ayshi@gmail","bday_date":"99/99/9999","bday_photo":"http://www.s3bucket.com/abc.jpg","user_name":"Prateek Rok","user_email":"prateek@gmail.com","greeting":"Happy Birthday!","user_photo":"http://www.s3bucket.com/xyz.jpg"}),
+                  "data": JSON.stringify({"bday_email":  $("#bday_email").val(),"bday_name": $("#bday_name").val(),"bday_date":$("#bday_date").val(),
+                      "bday_photo":"http://www.s3bucket.com/abc.jpg","user_name":$("#user_name").val(),"user_email":$("#user_name").val(),"greeting":$("#user_greetings").val(),"user_photo":"http://www.s3bucket.com/xyz.jpg"}),
                 };
 
                 $.ajax(settings).done(function (response) {
                   console.log(response);
                 });
-           });
+            });
+
+
        });
+       function readURL(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+
+                reader.onload = function (e) {
+                    $('#image-display')
+                        .attr('src', e.target.result)
+                        .width(150)
+                        .height(150);
+                };
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
    </script>
    </body>
 
