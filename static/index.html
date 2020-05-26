@@ -5,7 +5,6 @@
       <meta http-equiv='X-UA-Compatible' content='IE=edge'>
       <title>Birthday Artifact</title>
       <meta name='viewport' content='width=device-width, initial-scale=1'>
-      <!-- <link rel='stylesheet' type='text/css' href='main.css'> -->
       <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
       <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
@@ -20,7 +19,9 @@
       <div class="jumbotron text-center">
          <h1>Creative Engine</h1>
          <p>Create an amazing Birthday card with all your wishes!</p>
-          <a href="">abc</a>
+          <div class="unilinkDiv" style="display: none;">
+            <span>Here is the link to share with your friends - <a href="" id="unilink" style="border: solid 2px cyan; padding: 5px;"></a></span>
+          </div>
       </div>
       <div class="container-fluid">
 
@@ -92,6 +93,11 @@
 
                 $.ajax(settings).done(function (response) {
                   console.log(response);
+                  if (response.unilink) {
+                      $(".unilinkDiv").show();
+                      $("#unilink").attr("href", "bday/" + response.unilink);
+                      $("#unilink").text(response.unilink);
+                  }
                 });
             });
 
