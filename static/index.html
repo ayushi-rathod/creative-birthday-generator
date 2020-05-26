@@ -25,6 +25,12 @@
       </div>
       <div class="container-fluid">
 
+          <div class="row justify-content-center thank-you" style="display: none;">
+              <div style="align-content: center">
+                 <h2>Thank you for your wishes!!</h2>
+                 <h3>Your greeting will be ready soon!</h3>
+             </div>
+          </div>
          <div class="row">
             <form class="form" id="initial-bday-form" style="display: contents" method="post"  enctype="multipart/form-data">
                 <input type="hidden" value="">
@@ -82,27 +88,46 @@
 
            if (window.location.href.indexOf("bday") != -1) {
                 $("#left-div").hide();
+                $("#submitButtonId").click(function () {
+                    var url = "http://127.0.0.1:5001/bday/" + window.location.href.split("=")[1];
+                    var set = {
+                      "url": url,
+                      "method": "POST",
+                      "timeout": 0,
+                      "headers": {
+                        "Content-Type": "application/json"
+                      },
+                      "data": JSON.stringify({"bday_photo":"http://www.s3bucket.com/abc.jpg","user_name":$("#user_name").val(),"user_email":$("#user_name").val(),"greeting":$("#user_greetings").val(),"user_photo":"http://www.s3bucket.com/xyz.jpg"}),
+                    };
+                    $.ajax(set).done(function (response) {
+                      console.log(response);
+                      if (response.unilink) {
+                        $("#initial-bday-form").hide();
+                        $(".thank-you").show();
+                      }
+                    });
+                });
             } else {
                 $("#submitButtonId").click(function () {
-               var settings = {
-                  "url": "http://127.0.0.1:5001/genlink",
-                  "method": "POST",
-                  "timeout": 0,
-                  "headers": {
-                    "Content-Type": "application/json"
-                  },
-                  "data": JSON.stringify({"bday_email":  $("#bday_email").val(),"bday_name": $("#bday_name").val(),"bday_date":$("#bday_date").val(),
-                      "bday_photo":"http://www.s3bucket.com/abc.jpg","user_name":$("#user_name").val(),"user_email":$("#user_name").val(),"greeting":$("#user_greetings").val(),"user_photo":"http://www.s3bucket.com/xyz.jpg"}),
-                };
+                   var settings = {
+                      "url": "http://127.0.0.1:5001/genlink",
+                      "method": "POST",
+                      "timeout": 0,
+                      "headers": {
+                        "Content-Type": "application/json"
+                      },
+                      "data": JSON.stringify({"bday_email":  $("#bday_email").val(),"bday_name": $("#bday_name").val(),"bday_date":$("#bday_date").val(),
+                          "bday_photo":"http://www.s3bucket.com/abc.jpg","user_name":$("#user_name").val(),"user_email":$("#user_name").val(),"greeting":$("#user_greetings").val(),"user_photo":"http://www.s3bucket.com/xyz.jpg"}),
+                    };
 
-                $.ajax(settings).done(function (response) {
-                  console.log(response);
-                  if (response.unilink) {
-                      $(".unilinkDiv").show();
-                      $("#unilink").attr("href", "bday/" + response.unilink);
-                      $("#unilink").text(response.unilink);
-                  }
-                });
+                    $.ajax(settings).done(function (response) {
+                      console.log(response);
+                      if (response.unilink) {
+                          $(".unilinkDiv").show();
+                          $("#unilink").attr("href", "bday/" + response.unilink);
+                          $("#unilink").text(response.unilink);
+                      }
+                    });
             });
         }
    });
