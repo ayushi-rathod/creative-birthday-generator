@@ -2,6 +2,7 @@ from flask import Flask
 from flask import request
 from flask import jsonify
 from flask import Response
+from flask import redirect
 from pymongo import MongoClient
 from pprint import pprint
 from time import time
@@ -79,7 +80,7 @@ def unique(unilink):
 
     if uniqueInfo is None:
         return index()
-    return app.send_static_file('index.html?bday={}'.format(unilink))
+    return redirect('index.html?bday={}'.format(unilink))
 
 @app.route('/bday/<unilink>', methods = ['POST'])
 def saveData(unilink):
