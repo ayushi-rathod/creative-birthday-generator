@@ -28,7 +28,7 @@
          <div class="row">
             <form class="form" id="initial-bday-form" style="display: contents" method="post"  enctype="multipart/form-data">
                 <input type="hidden" value="">
-               <div class="col float-left">
+               <div class="col float-left" id="left-div">
                    <div class="row">
                         <h2 class="float-left">So Who's Birthday it is??</h2>
                     </div>
@@ -79,7 +79,11 @@
       </div>
    <script type="text/javascript">
        $(document).ready(function() {
-            $("#submitButtonId").click(function () {
+
+           if (window.location.href.indexOf("bday") != -1) {
+                $("#left-div").hide();
+            } else {
+                $("#submitButtonId").click(function () {
                var settings = {
                   "url": "http://127.0.0.1:5001/genlink",
                   "method": "POST",
@@ -100,23 +104,8 @@
                   }
                 });
             });
-
-
-       });
-       function readURL(input) {
-            if (input.files && input.files[0]) {
-                var reader = new FileReader();
-
-                reader.onload = function (e) {
-                    $('#image-display')
-                        .attr('src', e.target.result)
-                        .width(150)
-                        .height(150);
-                };
-
-                reader.readAsDataURL(input.files[0]);
-            }
         }
+   });
    </script>
    </body>
 
