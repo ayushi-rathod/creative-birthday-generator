@@ -9,6 +9,7 @@ from time import time
 import random
 import json
 from connection import Connections
+import awsconfig
 
 app = Flask(__name__)
 
@@ -17,6 +18,8 @@ try:
     secret = json.loads(open('credentials.json').read())
 except FileNotFoundError as err:
     print('FileNotFoundError')
+
+    # Server config for local
     secret['host'] = 'localhost'
     secret['port'] = '27017'
     secret['db'] = 'creativeengine'
@@ -105,6 +108,13 @@ def index():
     # Allows creation of new link
     return app.send_static_file('index.html')
 
+@app.route('/signed-url-s3', methods = ['GET'])
+def signedUrlUpload():
+    name: str = request.args.get('name')
+    print("Request registered to generate picture link.")
+    return awsconfig.get_presigned_url(s3_client, name)
+
 if __name__ == '__main__':
+    s3_client = awsconfig.connect_s3()
     dbInit()
     app.run(host='127.0.0.1', port=5001)
