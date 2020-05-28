@@ -135,3 +135,4 @@ bug.py
 # credentials
 credentials.json
 credentials.csv
+credentials.all.csv
