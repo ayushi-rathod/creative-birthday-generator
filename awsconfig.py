@@ -138,13 +138,15 @@ def upload_s3_files(s3_client, bucket_name, file_names):
 
 
 def get_presigned_url(s3_client, file_name, bucket_name="birthday-engine"):
+    # contentType = file_name.split('.').pop()
     return s3_client.generate_presigned_post(
         Bucket=bucket_name,
         Key=file_name,
-        Fields={"acl": "public-read", "Content-Type": "png"},
+        Fields={"acl": "public-read"},
         Conditions=[
-            {"acl": "public-read"},
-            # {"Content-Type": "png"}
+            {"acl": "public-read"}
         ],
         ExpiresIn=3600
     )
+# "Content-Type": "png"
+# {"Content-Type": "png"}

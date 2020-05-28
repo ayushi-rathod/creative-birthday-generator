@@ -18,6 +18,8 @@ try:
     secret = json.loads(open('credentials.json').read())
 except FileNotFoundError as err:
     print('FileNotFoundError')
+
+    # Server config for local
     secret['host'] = 'localhost'
     secret['port'] = '27017'
     secret['db'] = 'creativeengine'
@@ -108,11 +110,11 @@ def index():
 
 @app.route('/signed-url-s3', methods = ['GET'])
 def signedUrlUpload():
-    s3_client = awsconfig.connect_s3()
-    return awsconfig.get_presigned_url(s3_client, 'hello.png')
-    # return jsonify({"url": "www.cool.com"})
+    name: str = request.args.get('name')
+    print("Request registered to generate picture link.")
+    return awsconfig.get_presigned_url(s3_client, name)
 
 if __name__ == '__main__':
-    ls = awsconfig.get_s3_buckets(awsconfig.connect_s3())
+    s3_client = awsconfig.connect_s3()
     dbInit()
     app.run(host='127.0.0.1', port=5001)
