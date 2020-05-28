@@ -9,6 +9,7 @@ from time import time
 import random
 import json
 from connection import Connections
+import awsconfig
 
 app = Flask(__name__)
 
@@ -106,5 +107,6 @@ def index():
     return app.send_static_file('index.html')
 
 if __name__ == '__main__':
+    ls = awsconfig.get_s3_buckets(awsconfig.connect_s3())
     dbInit()
     app.run(host='127.0.0.1', port=5001)
