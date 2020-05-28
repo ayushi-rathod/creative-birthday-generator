@@ -136,3 +136,4 @@ bug.py
 credentials.json
 credentials.csv
 credentials.all.csv
+*.pem

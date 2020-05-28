@@ -106,6 +106,12 @@ def index():
     # Allows creation of new link
     return app.send_static_file('index.html')
 
+@app.route('/signed-url-s3', methods = ['GET'])
+def signedUrlUpload():
+    s3_client = awsconfig.connect_s3()
+    return awsconfig.get_presigned_url(s3_client, 'hello.png')
+    # return jsonify({"url": "www.cool.com"})
+
 if __name__ == '__main__':
     ls = awsconfig.get_s3_buckets(awsconfig.connect_s3())
     dbInit()
