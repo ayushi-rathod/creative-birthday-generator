@@ -3,6 +3,7 @@ from flask import request
 from flask import jsonify
 from flask import Response
 from flask import redirect
+from gevent.pywsgi import WSGIServer
 from pymongo import MongoClient
 from pprint import pprint
 from time import time
@@ -117,4 +118,12 @@ def signedUrlUpload():
 if __name__ == '__main__':
     s3_client = awsconfig.connect_s3()
     dbInit()
-    app.run(host='127.0.0.1', port=5001)
+
+    # Debug/Development
+    # app.run(host='127.0.0.1', port=5001)
+
+    # Production
+    listener:tuple = ('', 5001)
+    print("Running on http://{}:{}/".format((listener[0] or "127.0.0.1"), listener[1]))
+    http_server = WSGIServer(listener, app)
+    http_server.serve_forever()

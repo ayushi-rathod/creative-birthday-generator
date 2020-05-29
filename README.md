@@ -21,7 +21,7 @@ mongod
 
 ### Run engine
 ```
-python engine.py
+python engine.py runserver
 ```
 
 ---
