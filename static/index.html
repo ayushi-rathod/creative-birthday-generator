@@ -24,6 +24,8 @@
       <script src="/static/main.js"></script>
       <link rel="stylesheet" href="/static/main.css">
 
+      <script src="https://sdk.amazonaws.com/js/aws-sdk-2.685.0.min.js"></script>
+      <script src="/static/main.js"></script>
    </head>
    <body>
       <div class="jumbotron text-center">
@@ -61,10 +63,10 @@
                      <input type="text" class="form-control" id="bday_date" placeholder="MM/DD/YYYY" required>
                   </div>
                   <div class="form-group">
-                      <input type="file" name="fileToUpload" id="bday_photo" accept="image/gif, image/jpeg, image/png" onchange="readURL(this)">
+                      <input type="file" name="fileToUpload" id="bday_photo" data-val="" data-name="" accept="image/gif, image/jpeg, image/png" onchange="genUrlToSave(this)">
                   </div>
                    <div class="form-group">
-                       <img id="image-display" src="" width="150" height="150"/>
+                       <img id="bday_photo_img" src="" width="150" height="150"/>
                    </div>
                </div>
                <div class="col float-right">
@@ -84,8 +86,11 @@
                      <input type="text" class="form-control" id="user_greetings" placeholder="Enter your birthday wishes">
                   </div>
                   <div class="form-group">
-                     <img id="user_photo" src="" width="150" height="150">
+                      <input type="file" name="fileToUpload" id="user_photo" data-val="" data-name="" accept="image/gif, image/jpeg, image/png" onchange="genUrlToSave(this)">
                   </div>
+                   <div class="form-group">
+                       <img id="user_photo_img" src="" width="150" height="150"/>
+                   </div>
                    <div class="form-group">
                        <input type="button" class="btn btn-primary" id="submitButtonId" title="Submit" value="Submit"/>
                    </div>
@@ -94,53 +99,124 @@
          </div>
       </div>
    <script type="text/javascript">
-       $(document).ready(function() {
+       var image_name;
 
+        function genUrlToSave(thisParameter) {
+            var image = $(thisParameter).val().split('fakepath\\').pop();
+            var img_name = image.split('.')[0];
+            var image_ext = image.split('.')[1];
+            var timestamp = new Date($.now()).getTime();
+             var album;
+             if (window.location.href.indexOf("bday") != -1) {
+                 album = window.location.href.split("=")[1];
+             } else {
+                 album = $("#bday_email").val().split("@")[0];
+             }
+            image_name =  img_name + "-" + timestamp + "." + image_ext
+            var final_link = "https://birthday-engine.s3-us-west-1.amazonaws.com/" + album + "/" + image_name;
+            $(thisParameter).attr("data-val", final_link);
+            $(thisParameter).attr("data-name", image_name);
+
+            if (thisParameter.files && thisParameter.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    $("#" + thisParameter.id + '_img').attr('src', e.target.result);
+                }
+                reader.readAsDataURL(thisParameter.files[0]);
+            }
+        }
+
+       $(document).ready(function() {
            if (window.location.href.indexOf("bday") != -1) {
                 $("#left-div").hide();
                 $("#submitButtonId").click(function () {
-                    var url = "http://127.0.0.1:5001/bday/" + window.location.href.split("=")[1];
-                    var set = {
-                      "url": url,
-                      "method": "POST",
-                      "timeout": 0,
-                      "headers": {
-                        "Content-Type": "application/json"
-                      },
-                      "data": JSON.stringify({"bday_photo":"http://www.s3bucket.com/abc.jpg","user_name":$("#user_name").val(),"user_email":$("#user_name").val(),"greeting":$("#user_greetings").val(),"user_photo":"http://www.s3bucket.com/xyz.jpg"}),
-                    };
-                    $.ajax(set).done(function (response) {
-                      console.log(response);
-                      if (response.unilink) {
-                        $("#initial-bday-form").hide();
-                        $(".thank-you").show();
-                      }
-                    });
+                     var url = "http://127.0.0.1:5001/bday/" + window.location.href.split("=")[1];
+                    $.ajax({
+                        url: "http://127.0.0.1:5001/signed-url-s3",
+                        method: "GET",
+                        data: {
+                            "name": $("#user_photo").attr("data-name")
+                        }
+                        }).done(function(data) {
+                            console.log('success', data)
+                            uploadPhoto(image_name, data.AWSAccessKeyId, data.policy, data.signature, $("#user_photo"));
+
+                            var set = {
+                              "url": url,
+                              "method": "POST",
+                              "timeout": 0,
+                              "headers": {
+                                "Content-Type": "application/json"
+                              },
+                              "data": JSON.stringify({"bday_photo":$("#bday_photo").attr("data-val"),"user_name":$("#user_name").val(),
+                                  "user_email":$("#user_name").val(),"greeting":$("#user_greetings").val(),"user_photo":$("#user_photo").attr("data-val")}),
+                            };
+                            $.ajax(set).done(function (response) {
+                              console.log(response);
+                              if (response.unilink) {
+                                $("#initial-bday-form").hide();
+                                $(".thank-you").show();
+                              }
+                            });
+                      })
+                      .fail(function(xhr) {
+                        console.log('error', xhr);
+                      });
+
                 });
             } else {
                 $("#submitButtonId").click(function () {
-                   var settings = {
-                      "url": "http://127.0.0.1:5001/genlink",
-                      "method": "POST",
-                      "timeout": 0,
-                      "headers": {
-                        "Content-Type": "application/json"
-                      },
-                      "data": JSON.stringify({"bday_email":  $("#bday_email").val(),"bday_name": $("#bday_name").val(),"bday_date":$("#bday_date").val(),
-                          "bday_photo":"http://www.s3bucket.com/abc.jpg","user_name":$("#user_name").val(),"user_email":$("#user_name").val(),"greeting":$("#user_greetings").val(),"user_photo":"http://www.s3bucket.com/xyz.jpg"}),
-                    };
 
-                    $.ajax(settings).done(function (response) {
-                      console.log(response);
-                      if (response.unilink) {
-                          $(".unilinkDiv").show();
-                          $("#unilink").attr("href", "bday/" + response.unilink);
-                          $("#unilink").text(response.unilink);
-                      }
-                    });
-            });
-        }
-   });
+                    $.ajax({
+                        url: "http://127.0.0.1:5001/signed-url-s3",
+                        method: "GET",
+                        data: {
+                            "name": $("#bday_photo").attr("data-name")
+                        }
+                    }).done(function(data) {
+                        console.log('success', data)
+                        uploadPhoto(image_name, data.AWSAccessKeyId, data.policy, data.signature, $("#bday_photo"));
+                        $.ajax({
+                        url: "http://127.0.0.1:5001/signed-url-s3",
+                        method: "GET",
+                        data: {
+                            "name": $("#user_photo").attr("data-name")
+                        }
+                        }).done(function(data) {
+                            console.log('success', data)
+                            uploadPhoto(image_name, data.AWSAccessKeyId, data.policy, data.signature, $("#user_photo"));
+
+                            var settings = {
+                                  "url": "http://127.0.0.1:5001/genlink",
+                                  "method": "POST",
+                                  "timeout": 0,
+                                  "headers": {
+                                    "Content-Type": "application/json"
+                                  },
+                                  "data": JSON.stringify({"bday_email":  $("#bday_email").val(),"bday_name": $("#bday_name").val(),"bday_date":$("#bday_date").val(),
+                                      "bday_photo": $("#bday_photo").attr("data-val"),"user_name":$("#user_name").val(),"user_email":$("#user_name").val(),
+                                      "greeting":$("#user_greetings").val(),"user_photo":$("#user_photo").attr("data-val")}),
+                            };
+
+                            $.ajax(settings).done(function (response) {
+                              console.log(response);
+                              if (response.unilink) {
+                                  $(".unilinkDiv").show();
+                                  $("#unilink").attr("href", "bday/" + response.unilink);
+                                  $("#unilink").text(response.unilink);
+                              }
+                            });
+                      })
+                      .fail(function(xhr) {
+                        console.log('error', xhr);
+                      });
+                      })
+                      .fail(function(xhr) {
+                        console.log('error', xhr);
+                      });
+                });
+            }
+       });
    </script>
    </body>
 

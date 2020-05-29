@@ -14,19 +14,14 @@ function uploadPhoto(fileName, AWSAccessKeyId, policy, signature, fileInput) {
     form.append("AWSAccessKeyId", AWSAccessKeyId);
     form.append("policy", policy);
     form.append("signature", signature);
-    form.append("file", fileInput.files[0], fileName);
+    form.append("file", fileInput.files);
 
     var settings = {
-    "url": "https://birthday-engine.s3.amazonaws.com/",
-    "method": "POST",
-    "timeout": 0,
-    "headers": {
-        "Content-Type": "multipart/form-data; boundary=--------------------------212142281945585201057838"
-    },
-    "processData": false,
-    "mimeType": "multipart/form-data",
-    "contentType": false,
-    "data": form
+    url: "https://birthday-engine.s3.amazonaws.com/",
+    method: "POST",
+    processData: false,
+    contentType: false,
+    data: form
     };
 
     $.ajax(settings).done(function (response) {
