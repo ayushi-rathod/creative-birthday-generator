@@ -142,7 +142,11 @@
                         console.log("User Photo didn't upload");
                     }
                     
-                    resSaved = await saveUserInfo(url)
+                    resSaved = await saveUserInfo(url, 
+                        $("#bday_photo").attr("data-val"), 
+                        $("#user_name").val(), $("#user_name").val(), $("#user_greetings").val(),
+                        $("#user_photo").attr("data-val")
+                    )
                     if (resSaved !== undefined) {
                         console.log(resSaved);
                         if (resSaved.unilink) {

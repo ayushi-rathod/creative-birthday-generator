@@ -95,7 +95,7 @@ function getUniqueLink(
     });
 }
 
-function saveUserInfo(url) {
+function saveUserInfo(url, bday_photo, user_name, user_email, greeting, user_photo) {
     return new Promise((resolve, reject) => {
         var set = {
             "url": url,
@@ -104,8 +104,14 @@ function saveUserInfo(url) {
             "headers": {
             "Content-Type": "application/json"
             },
-            "data": JSON.stringify({"bday_photo":$("#bday_photo").attr("data-val"),"user_name":$("#user_name").val(),
-                "user_email":$("#user_name").val(),"greeting":$("#user_greetings").val(),"user_photo":$("#user_photo").attr("data-val")}),
+            "data": JSON.stringify(
+                {
+                    "bday_photo": bday_photo,
+                    "user_name": user_name,
+                    "user_email": user_email,
+                    "greeting": greeting,
+                    "user_photo": user_photo
+                }),
         };
 
         $.ajax(set);
