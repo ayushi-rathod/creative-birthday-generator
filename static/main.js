@@ -8,26 +8,38 @@
  * @param {File} fileInput FileObject
  */
 function uploadPhoto(fileName, AWSAccessKeyId, policy, signature, fileInput) {
-    var form = new FormData();
-    form.append("acl", "public-read");
-    form.append("key", fileName);
-    form.append("AWSAccessKeyId", AWSAccessKeyId);
-    form.append("policy", policy);
-    form.append("signature", signature);
-    form.append("file", fileInput.files);
-
-    var settings = {
-    url: "https://birthday-engine.s3.amazonaws.com/",
-    method: "POST",
-    processData: false,
-    contentType: false,
-    data: form
-    };
-
-    $.ajax(settings).done(function (response) {
-    console.log(response);
-    });
+    if (fileName === undefined || AWSAccessKeyId === undefined || policy === undefined || signature === undefined || fileInput === undefined) {
+        console.log("uploadPhoto FOUND EMPTY", fileName, AWSAccessKeyId, policy, signature, fileInput);
+        console.log(fileInput);
+        return;
+    }
+    return new Promise((resolve, reject) => {
+        console.log(fileInput)
     
+        var form = new FormData();
+        form.append("acl", "public-read");
+        form.append("key", fileName);
+        form.append("AWSAccessKeyId", AWSAccessKeyId);
+        form.append("policy", policy);
+        form.append("signature", signature);
+        form.append("file", fileInput);
+
+        var settings = {
+            url: "https://birthday-engine.s3.amazonaws.com/",
+            method: "POST",
+            processData: false,
+            contentType: false,
+            data: form,
+            statusCode: {
+                204: function (data) {
+                    console.log("Request completed 204");
+                    resolve(data || { statusCode: 204});
+                }
+            }
+        };
+
+        $.ajax(settings)
+    });
 }
 
 /**

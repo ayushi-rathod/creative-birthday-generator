@@ -24,8 +24,8 @@
       <script src="/static/main.js"></script>
       <link rel="stylesheet" href="/static/main.css">
 
-      <script src="https://sdk.amazonaws.com/js/aws-sdk-2.685.0.min.js"></script>
-      <script src="/static/main.js"></script>
+      <!-- <script src="https://sdk.amazonaws.com/js/aws-sdk-2.685.0.min.js"></script>
+      <script src="/static/main.js"></script> -->
    </head>
    <body>
       <div class="jumbotron text-center">
@@ -98,6 +98,8 @@
             </form>
          </div>
       </div>
+   </body>
+
    <script type="text/javascript">
        var image_name;
 
@@ -137,9 +139,10 @@
                         data: {
                             "name": $("#user_photo").attr("data-name")
                         }
-                        }).done(function(data) {
+                        }).done(async function(data) {
                             console.log('success', data)
-                            uploadPhoto(image_name, data.AWSAccessKeyId, data.policy, data.signature, $("#user_photo"));
+                            console.log('uploading: ', data.fields.key, data.fields.AWSAccessKeyId, data.fields.policy, data.fields.signature, document.getElementById("user_photo").files[0], 'user_photo');
+                            await uploadPhoto(data.fields.key, data.fields.AWSAccessKeyId, data.fields.policy, data.fields.signature, document.getElementById("user_photo").files[0]);
 
                             var set = {
                               "url": url,
@@ -173,18 +176,25 @@
                         data: {
                             "name": $("#bday_photo").attr("data-name")
                         }
-                    }).done(function(data) {
+                    }).done(async function(data) {
                         console.log('success', data)
-                        uploadPhoto(image_name, data.AWSAccessKeyId, data.policy, data.signature, $("#bday_photo"));
+                        console.log('uploading: ', data.fields.key, data.fields.AWSAccessKeyId, data.fields.policy, data.fields.signature, document.getElementById("bday_photo").files[0], 'bday_photo');
+                    
+                        var dx = await uploadPhoto(data.fields.key, data.fields.AWSAccessKeyId, data.fields.policy, data.fields.signature, document.getElementById("bday_photo").files[0])
+                        console.log("print");
+                        console.log(dx);
+                        console.log("printed");
+
+                        
                         $.ajax({
                         url: "http://127.0.0.1:5001/signed-url-s3",
                         method: "GET",
                         data: {
                             "name": $("#user_photo").attr("data-name")
                         }
-                        }).done(function(data) {
+                        }).done(async function(data) {
                             console.log('success', data)
-                            uploadPhoto(image_name, data.AWSAccessKeyId, data.policy, data.signature, $("#user_photo"));
+                            await uploadPhoto(image_name, data.AWSAccessKeyId, data.policy, data.signature, document.getElementById("user_photo").files[0]);
 
                             var settings = {
                                   "url": "http://127.0.0.1:5001/genlink",
@@ -218,6 +228,4 @@
             }
        });
    </script>
-   </body>
-
 </html>
