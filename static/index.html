@@ -136,6 +136,7 @@
 
                     data = await getSignUrl($("#user_photo").attr("data-name"))
                     dx = await uploadPhoto(data.fields.key, data.fields.AWSAccessKeyId, data.fields.policy, data.fields.signature, document.getElementById("user_photo").files[0]);
+                    console.log("value of dx:", dx)
                     if (dx.statusCode == 204) {
                         console.log("User photo uploaded Successfully");
                     } else {
@@ -160,6 +161,7 @@
                     data = await getSignUrl($("#bday_photo").attr("data-name"))
 
                     var dx = await uploadPhoto(data.fields.key, data.fields.AWSAccessKeyId, data.fields.policy, data.fields.signature, document.getElementById("bday_photo").files[0])
+                    console.log("value of dx:", dx);
                     if (dx.statusCode == 204) {
                         console.log("Bday photo uploaded Successfully");
                     } else {
@@ -167,9 +169,11 @@
                     }
                     // dx not matter.
 
-                    usrdata = await getSignUrl($("#user_photo").attr("data-name"))
+                    usrdata = await getSignUrl($("#user_photo").attr("data-name"));
+                    console.log("Value of usrdata", usrdata);
 
-                    dy = await uploadPhoto(image_name, usrdata.AWSAccessKeyId, usrdata.policy, usrdata.signature, document.getElementById("user_photo").files[0]);
+                    dy = await uploadPhoto(image_name, usrdata.fields.AWSAccessKeyId, usrdata.fields.policy, usrdata.fields.signature, document.getElementById("user_photo").files[0]);
+                    console.log("value of dy:", dy)
                     if (dy.statusCode == 204) {
                         console.log("User photo uploaded Successfully");
                     } else {
@@ -178,7 +182,7 @@
 
                     resUniqueLink = await getUniqueLink(
                                             $("#bday_email").val(), $("#bday_name").val(), $("#bday_date").val(), $("#bday_photo").attr("data-val"),
-                                            $("#user_name").val(),$("#user_name").val(),$("#user_greetings").val(),$("#user_photo").attr("data-val")
+                                            $("#user_name").val(), $("#user_name").val(), $("#user_greetings").val(), $("#user_photo").attr("data-val")
                                         );
 
                     if (resUniqueLink !== undefined) {
