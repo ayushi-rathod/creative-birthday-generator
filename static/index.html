@@ -5,18 +5,27 @@
       <meta http-equiv='X-UA-Compatible' content='IE=edge'>
       <title>Birthday Artifact</title>
       <meta name='viewport' content='width=device-width, initial-scale=1'>
-      <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+      <link rel='shortcut icon' type='image/x-icon' href='/static/favicon.ico' />
+
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.5.0/cerulean/bootstrap.min.css" integrity="sha256-eMIQtojewNHneFWVpBljYTgfjcw2C2l2UVtitX5J/M4=" crossorigin="anonymous" />
+      
       <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js" crossorigin="anonymous"></script>
+      <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/themes/base/jquery-ui.min.css" crossorigin="anonymous"/>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js" integrity="sha256-KM512VNnjElC30ehFwehXjx1YCHPiQkOPmqnrWtpccM=" crossorigin="anonymous"></script>
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha256-OFRAJNoaD8L3Br5lglV7VyLRf0itmoBzWUoM+Sji4/8=" crossorigin="anonymous"></script>
+
       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-      <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 
-      <link class="jsbin" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1/themes/base/jquery-ui.css" rel="stylesheet" type="text/css" />
-      <script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-      <script class="jsbin" src="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.0/jquery-ui.min.js"></script>
-
-      <script src="https://sdk.amazonaws.com/js/aws-sdk-2.685.0.min.js"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/aws-sdk/2.685.0/aws-sdk.min.js" integrity="sha256-NAe7HYahKIgwXjUHaRe70SBzWDEz0RbrxLmh1lfh+eo=" crossorigin="anonymous"></script>
+      <!-- <script src="/static/aws-sdk-2.685.0.min.js"></script> -->
+ 
       <script src="/static/main.js"></script>
+      <link rel="stylesheet" href="/static/main.css">
+
+      <!-- <script src="https://sdk.amazonaws.com/js/aws-sdk-2.685.0.min.js"></script>
+      <script src="/static/main.js"></script> -->
    </head>
    <body>
       <div class="jumbotron text-center">
@@ -89,6 +98,8 @@
             </form>
          </div>
       </div>
+   </body>
+
    <script type="text/javascript">
        var image_name;
 
@@ -120,95 +131,70 @@
        $(document).ready(function() {
            if (window.location.href.indexOf("bday") != -1) {
                 $("#left-div").hide();
-                $("#submitButtonId").click(function () {
-                     var url = "http://127.0.0.1:5001/bday/" + window.location.href.split("=")[1];
-                    $.ajax({
-                        url: "http://127.0.0.1:5001/signed-url-s3",
-                        method: "GET",
-                        data: {
-                            "name": $("#user_photo").attr("data-name")
+                $("#submitButtonId").click(async function () {
+                    var url = "http://127.0.0.1:5001/bday/" + window.location.href.split("=")[1];
+
+                    data = await getSignUrl($("#user_photo").attr("data-name"))
+                    dx = await uploadPhoto(data.fields.key, data.fields.AWSAccessKeyId, data.fields.policy, data.fields.signature, document.getElementById("user_photo").files[0]);
+                    // console.log("value of dx:", dx)
+                    if (dx.statusCode == 204) {
+                        console.log("User photo uploaded Successfully");
+                    } else {
+                        console.log("User Photo didn't upload");
+                    }
+                    
+                    resSaved = await saveUserInfo(url, 
+                        $("#bday_photo").attr("data-val"), 
+                        $("#user_name").val(), $("#user_name").val(), $("#user_greetings").val(),
+                        $("#user_photo").attr("data-val")
+                    )
+                    if (resSaved !== undefined) {
+                        // console.log(resSaved);
+                        if (resSaved.unilink) {
+                        $("#initial-bday-form").hide();
+                        $(".thank-you").show();
                         }
-                        }).done(function(data) {
-                            console.log('success', data)
-                            uploadPhoto(image_name, data.AWSAccessKeyId, data.policy, data.signature, $("#user_photo"));
-
-                            var set = {
-                              "url": url,
-                              "method": "POST",
-                              "timeout": 0,
-                              "headers": {
-                                "Content-Type": "application/json"
-                              },
-                              "data": JSON.stringify({"bday_photo":$("#bday_photo").attr("data-val"),"user_name":$("#user_name").val(),
-                                  "user_email":$("#user_name").val(),"greeting":$("#user_greetings").val(),"user_photo":$("#user_photo").attr("data-val")}),
-                            };
-                            $.ajax(set).done(function (response) {
-                              console.log(response);
-                              if (response.unilink) {
-                                $("#initial-bday-form").hide();
-                                $(".thank-you").show();
-                              }
-                            });
-                      })
-                      .fail(function(xhr) {
-                        console.log('error', xhr);
-                      });
-
+                    }
                 });
             } else {
-                $("#submitButtonId").click(function () {
+                $("#submitButtonId").click(async function () {
+                    data = await getSignUrl($("#bday_photo").attr("data-name"))
 
-                    $.ajax({
-                        url: "http://127.0.0.1:5001/signed-url-s3",
-                        method: "GET",
-                        data: {
-                            "name": $("#bday_photo").attr("data-name")
+                    var dx = await uploadPhoto(data.fields.key, data.fields.AWSAccessKeyId, data.fields.policy, data.fields.signature, document.getElementById("bday_photo").files[0])
+                    // console.log("value of dx:", dx);
+                    if (dx.statusCode == 204) {
+                        console.log("Bday photo uploaded Successfully");
+                    } else {
+                        console.log("Bday Photo didn't upload");
+                    }
+                    // dx not matter.
+
+                    usrdata = await getSignUrl($("#user_photo").attr("data-name"));
+                    // console.log("Value of usrdata", usrdata);
+
+                    dy = await uploadPhoto(image_name, usrdata.fields.AWSAccessKeyId, usrdata.fields.policy, usrdata.fields.signature, document.getElementById("user_photo").files[0]);
+                    // console.log("value of dy:", dy)
+                    if (dy.statusCode == 204) {
+                        console.log("User photo uploaded Successfully");
+                    } else {
+                        console.log("User Photo didn't upload");
+                    }
+
+                    resUniqueLink = await getUniqueLink(
+                                            $("#bday_email").val(), $("#bday_name").val(), $("#bday_date").val(), $("#bday_photo").attr("data-val"),
+                                            $("#user_name").val(), $("#user_name").val(), $("#user_greetings").val(), $("#user_photo").attr("data-val")
+                                        );
+
+                    if (resUniqueLink !== undefined) {
+                        console.log("Found a uniquelink", resUniqueLink);
+                        if (resUniqueLink.unilink) {
+                            $(".unilinkDiv").show();
+                            $("#unilink").attr("href", "bday/" + resUniqueLink.unilink);
+                            $("#unilink").text(resUniqueLink.unilink);
                         }
-                    }).done(function(data) {
-                        console.log('success', data)
-                        uploadPhoto(image_name, data.AWSAccessKeyId, data.policy, data.signature, $("#bday_photo"));
-                        $.ajax({
-                        url: "http://127.0.0.1:5001/signed-url-s3",
-                        method: "GET",
-                        data: {
-                            "name": $("#user_photo").attr("data-name")
-                        }
-                        }).done(function(data) {
-                            console.log('success', data)
-                            uploadPhoto(image_name, data.AWSAccessKeyId, data.policy, data.signature, $("#user_photo"));
-
-                            var settings = {
-                                  "url": "http://127.0.0.1:5001/genlink",
-                                  "method": "POST",
-                                  "timeout": 0,
-                                  "headers": {
-                                    "Content-Type": "application/json"
-                                  },
-                                  "data": JSON.stringify({"bday_email":  $("#bday_email").val(),"bday_name": $("#bday_name").val(),"bday_date":$("#bday_date").val(),
-                                      "bday_photo": $("#bday_photo").attr("data-val"),"user_name":$("#user_name").val(),"user_email":$("#user_name").val(),
-                                      "greeting":$("#user_greetings").val(),"user_photo":$("#user_photo").attr("data-val")}),
-                            };
-
-                            $.ajax(settings).done(function (response) {
-                              console.log(response);
-                              if (response.unilink) {
-                                  $(".unilinkDiv").show();
-                                  $("#unilink").attr("href", "bday/" + response.unilink);
-                                  $("#unilink").text(response.unilink);
-                              }
-                            });
-                      })
-                      .fail(function(xhr) {
-                        console.log('error', xhr);
-                      });
-                      })
-                      .fail(function(xhr) {
-                        console.log('error', xhr);
-                      });
+                    }
                 });
             }
        });
    </script>
-   </body>
-
 </html>
