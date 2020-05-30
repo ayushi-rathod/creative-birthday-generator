@@ -14,7 +14,7 @@ function uploadPhoto(fileName, AWSAccessKeyId, policy, signature, fileInput) {
         return;
     }
     return new Promise((resolve, reject) => {
-        console.log(fileInput)
+        // console.log(fileInput)
     
         var form = new FormData();
         form.append("acl", "public-read");
@@ -67,13 +67,13 @@ function getUniqueLink(
 ) {
     return new Promise((resolve, reject) => {
         var settings = {
-                url: "http://127.0.0.1:5001/genlink",
-                method: "POST",
-                timeout: 0,
-                headers: {
-                contentType: "application/json"
-            },
-            data: JSON.stringify({
+                "url": "http://127.0.0.1:5001/genlink",
+                "method": "POST",
+                "timeout": 0,
+                "headers": {
+                "Content-Type": "application/json"
+                },
+            "data": JSON.stringify({
                 "bday_email": bday_email,
                 "bday_name": bday_name,
                 "bday_date": bday_date,
@@ -83,15 +83,21 @@ function getUniqueLink(
                 "greeting": user_greetings,
                 "user_photo": user_photo
             }),
-            statusCode: {
+            "statusCode": {
                 200: function (data) {
                     console.log("Request completed 200");
                     resolve(data || {statusCode: 200});
+                }, 
+                201: function (data) {
+                    console.log("Request completed 201: Birthday user already has a link.");
+                    resolve(data || {statusCode: 201});
                 }
             }
         };
 
-        $.ajax(settings);
+        $.ajax(settings).done( function (data) {
+            console.log("Generated unique link dataL:", data)
+        });
     });
 }
 
