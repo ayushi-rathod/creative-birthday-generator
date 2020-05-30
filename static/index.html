@@ -131,99 +131,60 @@
        $(document).ready(function() {
            if (window.location.href.indexOf("bday") != -1) {
                 $("#left-div").hide();
-                $("#submitButtonId").click(function () {
-                     var url = "http://127.0.0.1:5001/bday/" + window.location.href.split("=")[1];
-                    $.ajax({
-                        url: "http://127.0.0.1:5001/signed-url-s3",
-                        method: "GET",
-                        data: {
-                            "name": $("#user_photo").attr("data-name")
+                $("#submitButtonId").click(async function () {
+                    var url = "http://127.0.0.1:5001/bday/" + window.location.href.split("=")[1];
+
+                    data = await getSignUrl($("#user_photo").attr("data-name"))
+                    dx = await uploadPhoto(data.fields.key, data.fields.AWSAccessKeyId, data.fields.policy, data.fields.signature, document.getElementById("user_photo").files[0]);
+                    if (dx.statusCode == 204) {
+                        console.log("User photo uploaded Successfully");
+                    } else {
+                        console.log("User Photo didn't upload");
+                    }
+                    
+                    resSaved = await saveUserInfo(url)
+                    if (resSaved !== undefined) {
+                        console.log(resSaved);
+                        if (resSaved.unilink) {
+                        $("#initial-bday-form").hide();
+                        $(".thank-you").show();
                         }
-                        }).done(async function(data) {
-                            console.log('success', data)
-                            console.log('uploading: ', data.fields.key, data.fields.AWSAccessKeyId, data.fields.policy, data.fields.signature, document.getElementById("user_photo").files[0], 'user_photo');
-                            await uploadPhoto(data.fields.key, data.fields.AWSAccessKeyId, data.fields.policy, data.fields.signature, document.getElementById("user_photo").files[0]);
-
-                            var set = {
-                              "url": url,
-                              "method": "POST",
-                              "timeout": 0,
-                              "headers": {
-                                "Content-Type": "application/json"
-                              },
-                              "data": JSON.stringify({"bday_photo":$("#bday_photo").attr("data-val"),"user_name":$("#user_name").val(),
-                                  "user_email":$("#user_name").val(),"greeting":$("#user_greetings").val(),"user_photo":$("#user_photo").attr("data-val")}),
-                            };
-                            $.ajax(set).done(function (response) {
-                              console.log(response);
-                              if (response.unilink) {
-                                $("#initial-bday-form").hide();
-                                $(".thank-you").show();
-                              }
-                            });
-                      })
-                      .fail(function(xhr) {
-                        console.log('error', xhr);
-                      });
-
+                    }
                 });
             } else {
-                $("#submitButtonId").click(function () {
+                $("#submitButtonId").click(async function () {
+                    data = await getSignUrl($("#bday_photo").attr("data-name"))
 
-                    $.ajax({
-                        url: "http://127.0.0.1:5001/signed-url-s3",
-                        method: "GET",
-                        data: {
-                            "name": $("#bday_photo").attr("data-name")
+                    var dx = await uploadPhoto(data.fields.key, data.fields.AWSAccessKeyId, data.fields.policy, data.fields.signature, document.getElementById("bday_photo").files[0])
+                    if (dx.statusCode == 204) {
+                        console.log("Bday photo uploaded Successfully");
+                    } else {
+                        console.log("Bday Photo didn't upload");
+                    }
+                    // dx not matter.
+
+                    usrdata = await getSignUrl($("#user_photo").attr("data-name"))
+
+                    dy = await uploadPhoto(image_name, usrdata.AWSAccessKeyId, usrdata.policy, usrdata.signature, document.getElementById("user_photo").files[0]);
+                    if (dy.statusCode == 204) {
+                        console.log("User photo uploaded Successfully");
+                    } else {
+                        console.log("User Photo didn't upload");
+                    }
+
+                    resUniqueLink = await getUniqueLink(
+                                            $("#bday_email").val(), $("#bday_name").val(), $("#bday_date").val(), $("#bday_photo").attr("data-val"),
+                                            $("#user_name").val(),$("#user_name").val(),$("#user_greetings").val(),$("#user_photo").attr("data-val")
+                                        );
+
+                    if (resUniqueLink !== undefined) {
+                        console.log("Found a uniquelink", resUniqueLink);
+                        if (resUniqueLink.unilink) {
+                            $(".unilinkDiv").show();
+                            $("#unilink").attr("href", "bday/" + resUniqueLink.unilink);
+                            $("#unilink").text(resUniqueLink.unilink);
                         }
-                    }).done(async function(data) {
-                        console.log('success', data)
-                        console.log('uploading: ', data.fields.key, data.fields.AWSAccessKeyId, data.fields.policy, data.fields.signature, document.getElementById("bday_photo").files[0], 'bday_photo');
-                    
-                        var dx = await uploadPhoto(data.fields.key, data.fields.AWSAccessKeyId, data.fields.policy, data.fields.signature, document.getElementById("bday_photo").files[0])
-                        console.log("print");
-                        console.log(dx);
-                        console.log("printed");
-
-                        
-                        $.ajax({
-                        url: "http://127.0.0.1:5001/signed-url-s3",
-                        method: "GET",
-                        data: {
-                            "name": $("#user_photo").attr("data-name")
-                        }
-                        }).done(async function(data) {
-                            console.log('success', data)
-                            await uploadPhoto(image_name, data.AWSAccessKeyId, data.policy, data.signature, document.getElementById("user_photo").files[0]);
-
-                            var settings = {
-                                  "url": "http://127.0.0.1:5001/genlink",
-                                  "method": "POST",
-                                  "timeout": 0,
-                                  "headers": {
-                                    "Content-Type": "application/json"
-                                  },
-                                  "data": JSON.stringify({"bday_email":  $("#bday_email").val(),"bday_name": $("#bday_name").val(),"bday_date":$("#bday_date").val(),
-                                      "bday_photo": $("#bday_photo").attr("data-val"),"user_name":$("#user_name").val(),"user_email":$("#user_name").val(),
-                                      "greeting":$("#user_greetings").val(),"user_photo":$("#user_photo").attr("data-val")}),
-                            };
-
-                            $.ajax(settings).done(function (response) {
-                              console.log(response);
-                              if (response.unilink) {
-                                  $(".unilinkDiv").show();
-                                  $("#unilink").attr("href", "bday/" + response.unilink);
-                                  $("#unilink").text(response.unilink);
-                              }
-                            });
-                      })
-                      .fail(function(xhr) {
-                        console.log('error', xhr);
-                      });
-                      })
-                      .fail(function(xhr) {
-                        console.log('error', xhr);
-                      });
+                    }
                 });
             }
        });
