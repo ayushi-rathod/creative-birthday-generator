@@ -6,7 +6,7 @@ from urllib.request import urlopen
 from io import BytesIO, StringIO
 import pathlib
 
-from imageutil import resizeByWidth, pasteImage, writeGreeting, cropImageByHeight
+from imageutil import resizeByWidth, pasteImage, writeGreeting, cropImageByHeight, writeEmojis
 from textutil import breakTextIntoLines
 
 # from helper import quotes,font_size_sort
@@ -16,9 +16,52 @@ import csv
 
 
 fontPath = "experiment/Sofia-Regular.otf"
+fontPathSymbola = "experiment/Symbola.ttf"
 FONT_SIZE = 70
 
 padding = 100
+
+emojis = {
+    1: '😊',
+    2: '🥳',
+    3:'🎁',
+    4:'💥',
+    5:'🎨',
+    6:'🧁',
+    7:'🍥',
+    8:'🎂',
+    9:'🍰',
+    10:'👻',
+    11:'😈',
+    12:'😍',
+    13:'🥳',
+    14:'🤩',
+    15:'👑',
+    16:'🌟',
+    17:'⭐',
+    18:'💫',
+    19:'🔥',
+    20:'💥',
+    21:'🚀',
+    22:'🎡',
+    23:'🏖',
+    24:'📸',
+    25:'🧨',
+    26:'💖',
+    27:'🎉',
+    28:'🎊',
+    29:'🎁',
+}
+
+def getEmoji(emojis=emojis):
+    num = random.randint(1, 29)
+    # print(emojis[num])
+    return(emojis[num])
+
+def random_color():
+    rgbl=[255,0,0]
+    random.shuffle(rgbl)
+    return tuple(rgbl)
 
 def Card_Prep(bday_person_name, user_name, url, card_no, greeting_text): # ,font_path):
     # baseImg = Image.open("All_cards/"+str(card_no)+".jpg")
@@ -65,6 +108,15 @@ def Card_Prep(bday_person_name, user_name, url, card_no, greeting_text): # ,font
     newX = padding
     newY = bday_person_img.size[1] + padding
     writeGreeting(baseImg, (newX, newY), (bday_person_name, greeting_text, user_name), fontPath, FONT_SIZE)
+
+    for i in range (1, random.randint(20, 60)):
+        # write random number of emojis
+        a, b = random.randint(0, baseImg.size[0]), random.randint(0, baseImg.size[1])
+        # print("a,b", a, b)
+        writeEmojis(baseImg, (a, b), getEmoji(), fontPathSymbola, random.randint(FONT_SIZE, 140), random_color())
+    
+
+    # writeGreeting(baseImg, (newX, newY), (bday_person_name, greeting_text, user_name), fontPath, FONT_SIZE)
     # (100, 2170)
 
     # baseImg.save(f'output/{bday_person_name}.jpg')
