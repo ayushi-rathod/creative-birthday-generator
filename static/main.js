@@ -126,6 +126,7 @@ function saveUserInfo(url, bday_photo, user_name, user_email, greeting, user_pho
 }
 
 function triggerUrl(name) {
+    
     return new Promise((resolve, reject) => {
         getUrl = {
             url: serverx+"/trigger",
@@ -136,13 +137,37 @@ function triggerUrl(name) {
             statusCode: {
                 200: function (data) {
                     console.log("Request completed 200");
+                    $("#greetingUrl").text('');
+                    $("#greetingUrl").append(
+                        "<a href=\""+ data['link'] +"\">Click here for the awesomeness!!! " + data['link'] + "</a>"
+                    )
                     resolve(data || {statusCode: 200});
                 }
             }
         }
         
         $.ajax(getUrl)
+        coolStuffRoll('#send_btn')
+        
+
     });
+}
+
+
+function coolStuffRoll(id) {
+    // $(id).attr('Value', "Creating.");
+    // $(id).attr('Value', "Some..");
+    // $(id).attr('Value', "Charm...");
+    setTimeout(function(){
+        $(id).attr('Value', "Creating.");
+    }, 10);
+    setTimeout(function(){
+        $(id).attr('Value', "Some..");
+    }, 10);
+    setTimeout(function(){
+        $(id).attr('Value', "Charm...");
+    }, 10);
+
 }
 
 /**
