@@ -39,17 +39,19 @@
           </video>
       </div>
       <div class="container-fluid">
+          <div class="unilinkDiv" style="display: none;">
+              <span>Here is the link to share with your friends - <a href="" id="unilink" style="color: cyan; padding: 5px;"></a></span>
+          </div>
           <div class="row justify-content-center thank-you" style="display: none;">
               <div style="align-content: center">
                  <h2>Wohoooooo.....!!</h2>
                   <img src="/static/resources/birthday_bash.gif" align="center">
-                 <h3>Your greeting will be ready soon!</h3>
+                  <h2>Your greeting will be ready soon!</h2>
+                  <label>If you are excited and would like a early peep-in, click </label>
+                  <input type="button" id="send_btn" class="btn btn-primary" title="Send" value="Send">
              </div>
           </div>
          <div class="row">
-             <div class="unilinkDiv" style="display: none;">
-                 <span>Here is the link to share with your friends - <a href="" id="unilink" style="color: cyan; padding: 5px;"></a></span>
-             </div>
             <form class="form" id="initial-bday-form" style="display: contents" method="post"  enctype="multipart/form-data">
                 <input type="hidden" value="">
                <div class="col float-left" id="left-div">
@@ -165,6 +167,10 @@
                         }
                     }
                 });
+
+                $("#send_btn").click(async function () {
+                    //TODO
+                });
             } else {
                     $("#submitButtonId").click(async function () {
                         if ($("#bday_email").val().split('@')[0] !== undefined && $("#bday_email").val().split('@')[0] !== "") {
@@ -203,10 +209,11 @@
                             if (resUniqueLink !== undefined) {
                                 console.log("Found a uniquelink", resUniqueLink);
                                 if (resUniqueLink.unilink) {
-                                    $("#initial-bday-form").hide();
                                     $(".unilinkDiv").show();
                                     $("#unilink").attr("href", "bday/" + resUniqueLink.unilink);
                                     $("#unilink").text(server_link + resUniqueLink.unilink);
+                                    $("#initial-bday-form").hide();
+                                    $(".thank-you").show();
                                 }
                             }
                         } else {
