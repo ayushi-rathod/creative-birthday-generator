@@ -17,8 +17,8 @@ FONT_SIZE = 70
 padding = 100
 
 def Card_Prep(bday_person_name, user_name, card_no, greeting_text): # ,font_path):
-    # img = Image.open("All_cards/"+str(card_no)+".jpg")
-    baseImg = Image.open("blank.jpg")
+    # baseImg = Image.open("All_cards/"+str(card_no)+".jpg")
+    baseImg = Image.open("blank.jpg") # it will be default.
 
     bday_person_img = Image.open("bdayimg.jpg")
     img_w, img_h = baseImg.size
