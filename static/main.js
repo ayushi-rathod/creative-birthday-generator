@@ -1,4 +1,5 @@
-
+// let serverx = 'http://127.0.0.1:5001'
+var serverx = ''
 /**
  * 
  * @param {string} fileName (album + filename) filename to save as, wrapped in folder. where album is uniquelink
@@ -45,7 +46,7 @@ function uploadPhoto(fileName, AWSAccessKeyId, policy, signature, fileInput) {
 function getSignUrl(name) {
     return new Promise((resolve, reject) => {
         getUrl = {
-            url: "http://127.0.0.1:5001/signed-url-s3",
+            url: serverx+"/signed-url-s3",
             method: "GET",
             data: {
                 "name": name
@@ -67,7 +68,7 @@ function getUniqueLink(
 ) {
     return new Promise((resolve, reject) => {
         var settings = {
-                "url": "http://127.0.0.1:5001/genlink",
+                "url": serverx+"/genlink",
                 "method": "POST",
                 "timeout": 0,
                 "headers": {
@@ -127,7 +128,7 @@ function saveUserInfo(url, bday_photo, user_name, user_email, greeting, user_pho
 function triggerUrl(name) {
     return new Promise((resolve, reject) => {
         getUrl = {
-            url: "http://127.0.0.1:5001/trigger",
+            url: serverx+"/trigger",
             method: "GET",
             data: {
                 "name": name
