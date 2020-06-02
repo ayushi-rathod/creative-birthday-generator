@@ -110,7 +110,8 @@
 
    <script type="text/javascript">
        var image_name;
-       var server_link = "http://127.0.0.1:5001/";
+    //    var server_link = "http://127.0.0.1:5001/";
+       var server_link = "";
 
         function genUrlToSave(thisParameter) {
             var image = $(thisParameter).val().split('fakepath\\').pop();
@@ -148,7 +149,7 @@
            if (window.location.href.indexOf("bday") != -1) {
                 $("#left-div").hide();
                 $("#submitButtonId").click(async function () {
-                    var url = "http://127.0.0.1:5001/bday/" + window.location.href.split("=")[1];
+                    var url = server_link+"/bday/" + window.location.href.split("=")[1];
 
                     let user_name_key = window.location.href.split("=")[1] + '/' + $("#user_email").val().split('@')[0] + "-" + $("#user_photo").attr("data-name")
 
