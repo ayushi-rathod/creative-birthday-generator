@@ -42,3 +42,8 @@ class Connections:
         return self.connect[secret['db']].bdayusers.find_one({
             "unilink" : unilink
         })
+
+    def findUsersByLink(self, unilink):
+        return self.connect[secret['db']].users.find({
+            "unilink" : unilink
+        })

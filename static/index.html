@@ -5,7 +5,8 @@
       <meta http-equiv='X-UA-Compatible' content='IE=edge'>
       <title>Birthday Artifact</title>
       <meta name='viewport' content='width=device-width, initial-scale=1'>
-      <link rel='shortcut icon' type='image/x-icon' href='/static/favicon.ico' />
+      <link rel="stylesheet" href="/static/main.css"/>
+       <link rel='shortcut icon' type='image/x-icon' href='/static/favicon.ico' />
 
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.5.0/cerulean/bootstrap.min.css" integrity="sha256-eMIQtojewNHneFWVpBljYTgfjcw2C2l2UVtitX5J/M4=" crossorigin="anonymous" />
       
@@ -27,20 +28,27 @@
       <!-- <script src="https://sdk.amazonaws.com/js/aws-sdk-2.685.0.min.js"></script>
       <script src="/static/main.js"></script> -->
    </head>
-   <body>
+   <body class="container">
       <div class="jumbotron text-center">
-         <h1>Creative Engine</h1>
-         <p>Create an amazing Birthday card with all your wishes!</p>
-          <div class="unilinkDiv" style="display: none;">
-            <span>Here is the link to share with your friends - <a href="" id="unilink" style="border: solid 2px cyan; padding: 5px;"></a></span>
-          </div>
+          <h1 class="title">Birthday Charmer</h1>
+         <h3 class="bold">Gift Your Friend Some Amazing Birthday Memories!</h3>
+      </div>
+      <div class="video">
+          <video controls autoplay loop>
+              <source src="/static/resources/birthday_video.mp4" type="video/mp4">
+          </video>
       </div>
       <div class="container-fluid">
-
+          <div class="unilinkDiv" style="display: none;">
+              <span>Here is the link to share with your friends - <a href="" id="unilink" style="color: cyan; padding: 5px;"></a></span>
+          </div>
           <div class="row justify-content-center thank-you" style="display: none;">
               <div style="align-content: center">
-                 <h2>Thank you for your wishes!!</h2>
-                 <h3>Your greeting will be ready soon!</h3>
+                 <h2>Wohoooooo.....!!</h2>
+                  <img src="/static/resources/birthday_bash.gif" align="center">
+                  <h2>Your greeting will be ready soon!</h2>
+                  <label>If you are excited and would like a early peep-in, click </label>
+                  <input type="button" id="send_btn" class="btn btn-primary" title="Send" value="Send">
              </div>
           </div>
          <div class="row">
@@ -48,7 +56,7 @@
                 <input type="hidden" value="">
                <div class="col float-left" id="left-div">
                    <div class="row">
-                        <h2 class="float-left">So Who's Birthday it is??</h2>
+                        <h1 class="float-left">So, Who's Birthday it is??</h1>
                     </div>
                   <div class="form-group">
                      <label for="bday_name">Full Name</label>
@@ -66,12 +74,12 @@
                       <input type="file" name="fileToUpload" id="bday_photo" data-val="" data-name="" accept="image/gif, image/jpeg, image/png" onchange="genUrlToSave(this)">
                   </div>
                    <div class="form-group">
-                       <img id="bday_photo_img" src="" width="150" height="150"/>
+                       <img id="bday_photo_img" src="/static/resources/user.png" width="150" height="150"/>
                    </div>
                </div>
                <div class="col float-right">
                    <div class="row">
-                        <h2 class="float-left">Tell me about you!!</h2>
+                        <h1 class="float-left">Tell us about you!!</h1>
                     </div>
                   <div class="form-group">
                      <label for="user_name">Your Name</label>
@@ -79,7 +87,7 @@
                   </div>
                   <div class="form-group">
                      <label for="user_email">Your Email</label>
-                     <input type="text" class="form-control" id="bday_email" placeholder="Email Your Address" required>
+                     <input type="text" class="form-control" id="user_email" placeholder="Email Your Address" required>
                   </div>
                    <div class="form-group">
                      <label for="user_greetings">Your Message</label>
@@ -89,7 +97,7 @@
                       <input type="file" name="fileToUpload" id="user_photo" data-val="" data-name="" accept="image/gif, image/jpeg, image/png" onchange="genUrlToSave(this)">
                   </div>
                    <div class="form-group">
-                       <img id="user_photo_img" src="" width="150" height="150"/>
+                       <img id="user_photo_img" src="/static/resources/user.png" width="150" height="150"/>
                    </div>
                    <div class="form-group">
                        <input type="button" class="btn btn-primary" id="submitButtonId" title="Submit" value="Submit"/>
@@ -102,18 +110,19 @@
 
    <script type="text/javascript">
        var image_name;
+       var server_link = "http://127.0.0.1:5001/";
 
         function genUrlToSave(thisParameter) {
             var image = $(thisParameter).val().split('fakepath\\').pop();
             var img_name = image.split('.')[0];
             var image_ext = image.split('.')[1];
             var timestamp = new Date($.now()).getTime();
-             var album;
-             if (window.location.href.indexOf("bday") != -1) {
-                 album = window.location.href.split("=")[1];
-             } else {
-                 album = $("#bday_email").val().split("@")[0];
-             }
+            var album;
+            if (window.location.href.indexOf("bday") != -1) {
+                album = window.location.href.split("=")[1];
+            } else {
+                album = $("#bday_email").val().split("@")[0];
+            }
             image_name =  img_name + "-" + timestamp + "." + image_ext
             var final_link = "https://birthday-engine.s3-us-west-1.amazonaws.com/" + album + "/" + image_name;
             $(thisParameter).attr("data-val", final_link);
@@ -128,13 +137,22 @@
             }
         }
 
+        $("#send_btn").click(async function () {
+                    //TODO
+            console.log("Send button is clicked.")
+            let dt = await triggerUrl($("#bday_email").val().split('@')[0] || window.location.href.split("=")[1]);
+            console.log(dt['link'])
+        });
+
        $(document).ready(function() {
            if (window.location.href.indexOf("bday") != -1) {
                 $("#left-div").hide();
                 $("#submitButtonId").click(async function () {
                     var url = "http://127.0.0.1:5001/bday/" + window.location.href.split("=")[1];
 
-                    data = await getSignUrl($("#user_photo").attr("data-name"))
+                    let user_name_key = window.location.href.split("=")[1] + '/' + $("#user_email").val().split('@')[0] + "-" + $("#user_photo").attr("data-name")
+
+                    data = await getSignUrl(user_name_key);
                     dx = await uploadPhoto(data.fields.key, data.fields.AWSAccessKeyId, data.fields.policy, data.fields.signature, document.getElementById("user_photo").files[0]);
                     // console.log("value of dx:", dx)
                     if (dx.statusCode == 204) {
@@ -142,14 +160,14 @@
                     } else {
                         console.log("User Photo didn't upload");
                     }
-                    
+
                     resSaved = await saveUserInfo(url, 
                         $("#bday_photo").attr("data-val"), 
-                        $("#user_name").val(), $("#user_name").val(), $("#user_greetings").val(),
+                        $("#user_name").val(), $("#user_email").val(), $("#user_greetings").val(),
                         $("#user_photo").attr("data-val")
                     )
                     if (resSaved !== undefined) {
-                        // console.log(resSaved);
+                        console.log(resSaved);
                         if (resSaved.unilink) {
                         $("#initial-bday-form").hide();
                         $(".thank-you").show();
@@ -157,43 +175,54 @@
                     }
                 });
             } else {
-                $("#submitButtonId").click(async function () {
-                    data = await getSignUrl($("#bday_photo").attr("data-name"))
+                    $("#submitButtonId").click(async function () {
+                        if ($("#bday_email").val().split('@')[0] !== undefined && $("#bday_email").val().split('@')[0] !== "") {
+                            let bday_name_key = $("#bday_email").val().split('@')[0] + '/' + $("#bday_photo").attr("data-name")
+                            let user_name_key = $("#bday_email").val().split('@')[0] + '/' + $("#user_email").val().split('@')[0] + "-" + $("#user_photo").attr("data-name")
 
-                    var dx = await uploadPhoto(data.fields.key, data.fields.AWSAccessKeyId, data.fields.policy, data.fields.signature, document.getElementById("bday_photo").files[0])
-                    // console.log("value of dx:", dx);
-                    if (dx.statusCode == 204) {
-                        console.log("Bday photo uploaded Successfully");
-                    } else {
-                        console.log("Bday Photo didn't upload");
-                    }
-                    // dx not matter.
+                            console.log("bday_name_key: ", bday_name_key, ":: user_name_key: ", user_name_key)
+                            // data = await getSignUrl($("#bday_photo").attr("data-name"))
+                            data = await getSignUrl(bday_name_key)
 
-                    usrdata = await getSignUrl($("#user_photo").attr("data-name"));
-                    // console.log("Value of usrdata", usrdata);
+                            let dx = await uploadPhoto(data.fields.key, data.fields.AWSAccessKeyId, data.fields.policy, data.fields.signature, document.getElementById("bday_photo").files[0])
+                            // console.log("value of dx:", dx);
+                            if (dx.statusCode == 204) {
+                                console.log("Bday photo uploaded Successfully");
+                            } else {
+                                console.log("Bday Photo didn't upload");
+                            }
+                            // dx not matter.
 
-                    dy = await uploadPhoto(image_name, usrdata.fields.AWSAccessKeyId, usrdata.fields.policy, usrdata.fields.signature, document.getElementById("user_photo").files[0]);
-                    // console.log("value of dy:", dy)
-                    if (dy.statusCode == 204) {
-                        console.log("User photo uploaded Successfully");
-                    } else {
-                        console.log("User Photo didn't upload");
-                    }
+                            let usrdata = await getSignUrl(user_name_key);
+                            // console.log("Value of usrdata", usrdata);
 
-                    resUniqueLink = await getUniqueLink(
-                                            $("#bday_email").val(), $("#bday_name").val(), $("#bday_date").val(), $("#bday_photo").attr("data-val"),
-                                            $("#user_name").val(), $("#user_name").val(), $("#user_greetings").val(), $("#user_photo").attr("data-val")
-                                        );
+                            let dy = await uploadPhoto(usrdata.fields.key, usrdata.fields.AWSAccessKeyId, usrdata.fields.policy, usrdata.fields.signature, document.getElementById("user_photo").files[0]);
+                            // console.log("value of dy:", dy)
+                            if (dy.statusCode == 204) {
+                                console.log("User photo uploaded Successfully");
+                            } else {
+                                console.log("User Photo didn't upload");
+                            }
 
-                    if (resUniqueLink !== undefined) {
-                        console.log("Found a uniquelink", resUniqueLink);
-                        if (resUniqueLink.unilink) {
-                            $(".unilinkDiv").show();
-                            $("#unilink").attr("href", "bday/" + resUniqueLink.unilink);
-                            $("#unilink").text(resUniqueLink.unilink);
+                            resUniqueLink = await getUniqueLink(
+                                                    $("#bday_email").val(), $("#bday_name").val(), $("#bday_date").val(), $("#bday_photo").attr("data-val"),
+                                                    $("#user_name").val(), $("#user_email").val(), $("#user_greetings").val(), $("#user_photo").attr("data-val")
+                                                );
+
+                            if (resUniqueLink !== undefined) {
+                                console.log("Found a uniquelink", resUniqueLink);
+                                if (resUniqueLink.unilink) {
+                                    $(".unilinkDiv").show();
+                                    $("#unilink").attr("href", "bday/" + resUniqueLink.unilink);
+                                    $("#unilink").text(server_link + resUniqueLink.unilink);
+                                    $("#initial-bday-form").hide();
+                                    $(".thank-you").show();
+                                }
+                            }
+                        } else {
+                            console.log("Please correct the email address of our Birthday person");
                         }
-                    }
-                });
+                    });
             }
        });
    </script>
