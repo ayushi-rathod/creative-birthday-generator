@@ -20,16 +20,18 @@ def Card_Prep(bday_person_name, user_name, card_no, greeting_text): # ,font_path
     # img = Image.open("All_cards/"+str(card_no)+".jpg")
     baseImg = Image.open("blank.jpg")
 
-    # 
     bday_person_img = Image.open("bdayimg.jpg")
-    b_w, b_h = bday_person_img.size
     img_w, img_h = baseImg.size
-    print()
 
     bday_person_img = resizeByWidth(bday_person_img, img_w, padding)
+
+    # greeting_text break into lines and count lines. and get dimension of height is requires. 
     greeting_text, text_h = breakTextIntoLines(greeting_text)
     print("bi", baseImg.size)
-    print(bday_person_img.size[1] + text_h + (2 * padding))
+    
+    # if bday_person_img size [1] // height of reesized leaves space less then the text - crop the bday_person_img image 
+    # by height (irrespective of content it loses in height)
+
     if (bday_person_img.size[1] + text_h + (2 * padding) > img_h):
         # Special case when text is too long and it needs to be fixed.
         new_h = img_h - text_h
@@ -48,37 +50,17 @@ def Card_Prep(bday_person_name, user_name, card_no, greeting_text): # ,font_path
         # General case
         pasteImage(baseImg, bday_person_img, (padding//2, padding//2))
             
-
         # bday_person_img = cropImageByHeight(bday_person_img, (img_h - text_h - (2 * padding)))
         print(bday_person_img.size)
 
-    # print(greeting_text)
-    # baseImg.paste(bday_person_img, (padding//2, padding//2))
-    
-    # TODO - if bday_person_img size [1] // height of reesized leaves space less then the text - crop the bday_person_img image 
-    # by height (irrespective of content it loses in height)
-
-    # TODO - greeting_text break into lines and count lines. and get dimension of height is requires. 
-
     newX = padding
-    # newY = bday_person_img.size[1] + (2 * padding)
     newY = bday_person_img.size[1] + padding
     writeGreeting(baseImg, (newX, newY), (bday_person_name, greeting_text, user_name), fontPath, FONT_SIZE)
-    # writeGreeting(baseImg, (100, 2170), (bday_person_name, greeting_text, user_name), fontPath, FONT_SIZE)
+    # (100, 2170)
 
-    print()
-    # baseImg.save('output/test.jpg', "JPEG")
-
-    # 
-
-    # draw = ImageDraw.Draw(baseImg)
-
-    # font = ImageFont.truetype(fontPath, FONT_SIZE)
-    # draw.text((100, 2170), f'Dear {bday_person_name},\n{greeting_text}\n     '
-    #                        f'                                -From {user_name}.',(0, 0, 0), font=font)
     # baseImg.save(f'output/{bday_person_name}.jpg')
+    # print(f'{bday_person_name} saved!')
     return baseImg
-    print(f'{bday_person_name} saved!')
 
 path, dirs, files = next(os.walk("All_cards"))
 file_count = len(files)
@@ -103,6 +85,7 @@ def main(bday_person_name, user_names, greeting_texts):
     for user_name, greeting_text in zip(user_names, greeting_texts):
         img.append(Card_Prep(bday_person_name, user_name, rand_card, greeting_text)) # , path1 + '/' + files1[rand_font])
 
+    # Save all images to gif.
     img[0].save(f'output/{bday_person_name}.gif', save_all=True, append_images=img[1:], duration=1300, loop=0)
 
     # print(bday_person_name, rand_card, rand_quotes, rand_font)
