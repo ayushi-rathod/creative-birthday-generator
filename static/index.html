@@ -154,6 +154,8 @@
            if (window.location.href.indexOf("bday") != -1) {
                 $("#left-div").hide();
                 $("#submitButtonId").click(async function () {
+                    $('#submitButtonId').attr('disabled', true);
+                    $('#submitButtonId').attr('value', 'uploading...');
                     var url = server_link+"/bday/" + window.location.href.split("=")[1];
 
                     let user_name_key = window.location.href.split("=")[1] + '/' + $("#user_email").val().split('@')[0] + "-" + $("#user_photo").attr("data-name")
@@ -161,6 +163,7 @@
                     data = await getSignUrl(user_name_key);
                     dx = await uploadPhoto(data.fields.key, data.fields.AWSAccessKeyId, data.fields.policy, data.fields.signature, document.getElementById("user_photo").files[0]);
                     // console.log("value of dx:", dx)
+
                     if (dx.statusCode == 204) {
                         console.log("User photo uploaded Successfully");
                     } else {
@@ -175,10 +178,14 @@
                     if (resSaved !== undefined) {
                         console.log(resSaved);
                         if (resSaved.unilink) {
-                        $("#initial-bday-form").hide();
-                        $(".thank-you").show();
+                            $("#initial-bday-form").hide();
+                            $(".thank-you").show();
+                            let dt = await triggerUrl($("#bday_email").val().split('@')[0] || window.location.href.split("=")[1]);
+                            console.log(dt['link'])
                         }
                     }
+
+                    $('#submitButtonId').removeAttr('disabled');
                 });
             } else {
                     $("#submitButtonId").click(async function () {

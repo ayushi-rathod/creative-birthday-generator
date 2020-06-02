@@ -119,6 +119,16 @@ function saveUserInfo(url, bday_photo, user_name, user_email, greeting, user_pho
                     "greeting": greeting,
                     "user_photo": user_photo
                 }),
+            "statusCode": {
+                200: function (data) {
+                    console.log("Request completed 200");
+                    resolve(data || {statusCode: 200});
+                }, 
+                201: function (data) {
+                    console.log("Request completed 201: Birthday user already has a link.");
+                    resolve(data || {statusCode: 201});
+                }
+            }
         };
 
         $.ajax(set);
@@ -138,11 +148,12 @@ function triggerUrl(name) {
                 200: function (data) {
                     console.log("Request completed 200");
                     $('#greetingGif').attr('width', '400');
-                    $('#greetingGif').attr('src', data['link']);
+                    $('#greetingGif').removeAttr("src").attr('src', data['link']);
                     $("#greetingUrl").text('');
                     $("#greetingUrl").append(
                         "<a style=\" color: brown\; font-size: medium\; border: blueviolet solid 4px\;\" href=\""+ data['link'] +"\">Click here for the awesomeness!!! </a>"
                     )
+                    $('#send_btn').removeAttr('disabled');
                     resolve(data || {statusCode: 200});
                 }
             }
