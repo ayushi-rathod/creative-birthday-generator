@@ -1,6 +1,10 @@
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
+import requests
+from urllib.request import urlopen
+from io import BytesIO, StringIO
+import pathlib
 
 from imageutil import resizeByWidth, pasteImage, writeGreeting, cropImageByHeight
 from textutil import breakTextIntoLines
@@ -11,16 +15,25 @@ import os
 import csv
 
 
-fontPath = "Sofia-Regular.otf"
+fontPath = "experiment/Sofia-Regular.otf"
 FONT_SIZE = 70
 
 padding = 100
 
-def Card_Prep(bday_person_name, user_name, card_no, greeting_text): # ,font_path):
+def Card_Prep(bday_person_name, user_name, url, card_no, greeting_text): # ,font_path):
     # baseImg = Image.open("All_cards/"+str(card_no)+".jpg")
-    baseImg = Image.open("blank.jpg") # it will be default.
+    baseImg = Image.open("experiment/blank.jpg") # it will be default.
 
-    bday_person_img = Image.open("bdayimg.jpg")
+    # bday_person_img = Image.open("experiment/bdayimg.jpg")
+    # print(bday_person_img)
+    # or "experiment/All_cards/"+str(card_no)+".jpg"
+    # print(requests.get(url, stream=True).raw)
+    # bday_person_img = Image.open(requests.get(url, stream=True).raw)
+    if 'http' in url:
+        response = requests.get(url)
+        bday_person_img = Image.open(BytesIO(response.content))
+    else:
+        bday_person_img = Image.open("experiment/All_cards/"+str(card_no)+".jpg")
     img_w, img_h = baseImg.size
 
     bday_person_img = resizeByWidth(bday_person_img, img_w, padding)
@@ -62,8 +75,8 @@ def Card_Prep(bday_person_name, user_name, card_no, greeting_text): # ,font_path
     # print(f'{bday_person_name} saved!')
     return baseImg
 
-path, dirs, files = next(os.walk("All_cards"))
-file_count = len(files)
+# path, dirs, files = next(os.walk("All_cards"))
+# file_count = len(files)
 
 # path1, dirs1, files1 = next(os.walk("All_font"))
 # file_count1 = len(files1)
@@ -74,18 +87,20 @@ file_count = len(files)
 
 
 # def main(bday_person_name, user_name, greeting_text):
-def main(bday_person_name, user_names, greeting_texts):
+def main(bday_person_name, user_names, greeting_texts, user_photo_urls):
     # rand_quotes = random.randint(1, len(quotes))
     # rand_quotes = "This is a greeting from a brother. Happy Birthdayy my bro."
-    rand_card = random.randint(1, file_count)
+    # rand_card = random.randint(1, file_count)
     # rand_font = random.randint(0, file_count1-1)
     # rand_font = 'All_font/Great Wishes.otf'
     # print(bday_person_name, user_name, rand_card, greeting_text) #, files1[rand_font])
     img = []
-    for user_name, greeting_text in zip(user_names, greeting_texts):
-        img.append(Card_Prep(bday_person_name, user_name, rand_card, greeting_text)) # , path1 + '/' + files1[rand_font])
+    for user_name, greeting_text, url in zip(user_names, greeting_texts, user_photo_urls):
+        img.append(Card_Prep(bday_person_name=bday_person_name, user_name=user_name, url=url, card_no=random.randint(1, 9), greeting_text=greeting_text)) # , path1 + '/' + files1[rand_font])
 
     # Save all images to gif.
+    pathlib.Path('output').mkdir(parents=True, exist_ok=True) 
+
     img[0].save(f'output/{bday_person_name}.gif', save_all=True, append_images=img[1:], duration=1300, loop=0)
 
     # print(bday_person_name, rand_card, rand_quotes, rand_font)
@@ -93,12 +108,14 @@ def main(bday_person_name, user_names, greeting_texts):
     print("Done for {bday_person_name}".format(bday_person_name = bday_person_name))
 #
 
-bday_person_name = "Prateek"
-user_names = ["UserFriend", "UserFriend2", "UserFriend3"]  
-greeting_texts = ["This is a greeting from a brother. Happy Birthdayy my bro.", "this is second message", "this is third message"]
+# bday_person_name = "Prateek"
+# user_names = ["UserFriend", "UserFriend2", "UserFriend3"]  
+# greeting_texts = ["This is a greeting from a brother. Happy Birthdayy my bro.", "this is second message", "this is third message"]
+# user_photo_urls = ["https://birthday-engine.s3-us-west-1.amazonaws.com/prateekro/folderpng-1590942671917.png", "https://birthday-engine.s3-us-west-1.amazonaws.com/prateekro/folderpng-1590942671917.png"]
+
 # greeting_text = "Prateek UserFriend 10 This is a greeting from a brother. Happy Birthdayy my bro. Prateek UserFriend 10 This is a greeting from a brother. Happy Birthdayy my bro. \
 # Prateek UserFriend 10 This is a greeting from a brother.Happy Birthdayy my bro. Prateek UserFriend 10 This is a greeting from a brother.Happy Birthdayy my bro. Prateek UserFriend 10 \
 # This is a greeting from a brother.Happy Birthdayy my bro. Prateek UserFriend 10 This is a greeting from a brother.Happy Birthdayy my bro. Prateek UserFriend 10 This is a greeting from \
 # a brother.. Prateek UserFriend 10 This is a greeting from a brother.. Prateek UserFriend 10 This is a greeting from a brother. . Prateek UserFriend 10 This is a greeting from a brother. . Prateek UserFriend 10 This is a greeting from a brother."
 
-main(bday_person_name, user_names, greeting_texts)
+# main(bday_person_name, user_names, greeting_texts, user_photo_urls)

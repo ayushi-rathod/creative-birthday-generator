@@ -11,6 +11,7 @@ import random
 import json
 from connection import Connections
 import awsconfig
+from artifact import createArtifactFor
 
 app = Flask(__name__)
 
@@ -120,7 +121,7 @@ def trigger():
     name: str = request.args.get('name')
     print("Request registered to create gif and send.")
     # TODO - check for album with name else send error
-    createArtifactFor(name)
+    createArtifactFor(s3_client, Connections(connection), name)
 
     return jsonify({"unilink": name})
 
