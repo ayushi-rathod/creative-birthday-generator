@@ -9,6 +9,10 @@ import awsconfig
 #  - Process each folder
 #  - Map greeting texts with picture.
 
+def createArtifactFor(name):
+    # name is albumName / unilink.
+    print(name)
+
 def openFolder(username):
     Image.open(username + "*" +'.jpg')
 

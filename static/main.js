@@ -123,6 +123,27 @@ function saveUserInfo(url, bday_photo, user_name, user_email, greeting, user_pho
         $.ajax(set);
     }); 
 }
+
+function triggerUrl(name) {
+    return new Promise((resolve, reject) => {
+        getUrl = {
+            url: "http://127.0.0.1:5001/trigger",
+            method: "GET",
+            data: {
+                "name": name
+            },
+            statusCode: {
+                200: function (data) {
+                    console.log("Request completed 200");
+                    resolve(data || {statusCode: 200});
+                }
+            }
+        }
+        
+        $.ajax(getUrl)
+    });
+}
+
 /**
  * @example usage
  * getUrlParam.get('paramname')
