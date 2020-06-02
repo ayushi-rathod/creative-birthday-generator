@@ -1,0 +1,63 @@
+.confetti-background {
+    background: url("/resources/zaumvyft_Confetti.gif");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+body {
+    background-image: url('/static/resources/etamuhnf_Balloons_2.gif');
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+.title {
+    font-weight: bold;
+    font-size: 70px;
+    color: black;
+    font-family: "Monotype Corsiva", "Apple Chancery", "URW Chancery L", cursive;
+}
+
+.bold {
+    font-weight: bold;
+    color: black;
+}
+
+.thank-you {
+    background: url("resources/zaumvyft_Confetti.gif");
+}
+
+.jumbotron {
+    padding: 10px 0 10px 0;
+    margin-bottom: 0px;
+    background: none;
+}
+
+h1 {
+    color: black;
+    font-weight: bold;
+}
+
+.container-fluid {
+    margin-top: 50px;
+}
+
+.form-control {
+    border: 1px solid #000000;
+}
+
+.form-group label {
+    color: black;
+    font-weight: bold;
+}
+
+.btn-primary {
+    border: 2px solid black;
+    width: 150px;
+}
+
+.unilinkDiv {
+    border: 2px solid black;
+    border-radius: 2px;
+    font-weight: bold;
+    font-size: 25px;
+}

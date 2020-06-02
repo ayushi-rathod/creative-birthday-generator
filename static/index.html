@@ -5,7 +5,8 @@
       <meta http-equiv='X-UA-Compatible' content='IE=edge'>
       <title>Birthday Artifact</title>
       <meta name='viewport' content='width=device-width, initial-scale=1'>
-      <link rel='shortcut icon' type='image/x-icon' href='/static/favicon.ico' />
+      <link rel="stylesheet" href="/static/main.css"/>
+       <link rel='shortcut icon' type='image/x-icon' href='/static/favicon.ico' />
 
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/4.5.0/cerulean/bootstrap.min.css" integrity="sha256-eMIQtojewNHneFWVpBljYTgfjcw2C2l2UVtitX5J/M4=" crossorigin="anonymous" />
       
@@ -27,28 +28,33 @@
       <!-- <script src="https://sdk.amazonaws.com/js/aws-sdk-2.685.0.min.js"></script>
       <script src="/static/main.js"></script> -->
    </head>
-   <body>
+   <body class="container">
       <div class="jumbotron text-center">
-         <h1>Creative Engine</h1>
-         <p>Create an amazing Birthday card with all your wishes!</p>
-          <div class="unilinkDiv" style="display: none;">
-            <span>Here is the link to share with your friends - <a href="" id="unilink" style="border: solid 2px cyan; padding: 5px;"></a></span>
-          </div>
+          <h1 class="title">Birthday Charmer</h1>
+         <h3 class="bold">Gift Your Friend Some Amazing Birthday Memories!</h3>
+      </div>
+      <div class="video">
+          <video controls autoplay loop>
+              <source src="/static/resources/birthday_video.mp4" type="video/mp4">
+          </video>
       </div>
       <div class="container-fluid">
-
           <div class="row justify-content-center thank-you" style="display: none;">
               <div style="align-content: center">
-                 <h2>Thank you for your wishes!!</h2>
+                 <h2>Wohoooooo.....!!</h2>
+                  <img src="/static/resources/birthday_bash.gif" align="center">
                  <h3>Your greeting will be ready soon!</h3>
              </div>
           </div>
          <div class="row">
+             <div class="unilinkDiv" style="display: none;">
+                 <span>Here is the link to share with your friends - <a href="" id="unilink" style="color: cyan; padding: 5px;"></a></span>
+             </div>
             <form class="form" id="initial-bday-form" style="display: contents" method="post"  enctype="multipart/form-data">
                 <input type="hidden" value="">
                <div class="col float-left" id="left-div">
                    <div class="row">
-                        <h2 class="float-left">So Who's Birthday it is??</h2>
+                        <h1 class="float-left">So, Who's Birthday it is??</h1>
                     </div>
                   <div class="form-group">
                      <label for="bday_name">Full Name</label>
@@ -66,12 +72,12 @@
                       <input type="file" name="fileToUpload" id="bday_photo" data-val="" data-name="" accept="image/gif, image/jpeg, image/png" onchange="genUrlToSave(this)">
                   </div>
                    <div class="form-group">
-                       <img id="bday_photo_img" src="" width="150" height="150"/>
+                       <img id="bday_photo_img" src="/static/resources/user.png" width="150" height="150"/>
                    </div>
                </div>
                <div class="col float-right">
                    <div class="row">
-                        <h2 class="float-left">Tell me about you!!</h2>
+                        <h1 class="float-left">Tell us about you!!</h1>
                     </div>
                   <div class="form-group">
                      <label for="user_name">Your Name</label>
@@ -89,7 +95,7 @@
                       <input type="file" name="fileToUpload" id="user_photo" data-val="" data-name="" accept="image/gif, image/jpeg, image/png" onchange="genUrlToSave(this)">
                   </div>
                    <div class="form-group">
-                       <img id="user_photo_img" src="" width="150" height="150"/>
+                       <img id="user_photo_img" src="/static/resources/user.png" width="150" height="150"/>
                    </div>
                    <div class="form-group">
                        <input type="button" class="btn btn-primary" id="submitButtonId" title="Submit" value="Submit"/>
@@ -102,6 +108,7 @@
 
    <script type="text/javascript">
        var image_name;
+       var server_link = "http://127.0.0.1:5001/";
 
         function genUrlToSave(thisParameter) {
             var image = $(thisParameter).val().split('fakepath\\').pop();
@@ -151,7 +158,7 @@
                         $("#user_photo").attr("data-val")
                     )
                     if (resSaved !== undefined) {
-                        // console.log(resSaved);
+                        console.log(resSaved);
                         if (resSaved.unilink) {
                         $("#initial-bday-form").hide();
                         $(".thank-you").show();
@@ -196,9 +203,10 @@
                             if (resUniqueLink !== undefined) {
                                 console.log("Found a uniquelink", resUniqueLink);
                                 if (resUniqueLink.unilink) {
+                                    $("#initial-bday-form").hide();
                                     $(".unilinkDiv").show();
                                     $("#unilink").attr("href", "bday/" + resUniqueLink.unilink);
-                                    $("#unilink").text(resUniqueLink.unilink);
+                                    $("#unilink").text(server_link + resUniqueLink.unilink);
                                 }
                             }
                         } else {
