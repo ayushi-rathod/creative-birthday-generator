@@ -141,6 +141,7 @@ function triggerUrl(name) {
                     $("#greetingUrl").append(
                         "<a style=\" color: brown\; font-size: medium\; border: blueviolet solid 4px\;\" href=\""+ data['link'] +"\">Click here for the awesomeness!!! </a>"
                     )
+                    $('#greetingGif').attr('src', data['link']);
                     resolve(data || {statusCode: 200});
                 }
             }
