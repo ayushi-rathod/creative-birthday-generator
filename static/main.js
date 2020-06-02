@@ -139,7 +139,7 @@ function triggerUrl(name) {
                     console.log("Request completed 200");
                     $("#greetingUrl").text('');
                     $("#greetingUrl").append(
-                        "<a href=\""+ data['link'] +"\">Click here for the awesomeness!!! " + data['link'] + "</a>"
+                        "<a style=\" color: brown\; font-size: medium\; border: blueviolet solid 4px\;\" href=\""+ data['link'] +"\">Click here for the awesomeness!!! </a>"
                     )
                     resolve(data || {statusCode: 200});
                 }
