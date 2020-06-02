@@ -137,11 +137,12 @@ function triggerUrl(name) {
             statusCode: {
                 200: function (data) {
                     console.log("Request completed 200");
+                    $('#greetingGif').attr('width', '400');
+                    $('#greetingGif').attr('src', data['link']);
                     $("#greetingUrl").text('');
                     $("#greetingUrl").append(
                         "<a style=\" color: brown\; font-size: medium\; border: blueviolet solid 4px\;\" href=\""+ data['link'] +"\">Click here for the awesomeness!!! </a>"
                     )
-                    $('#greetingGif').attr('src', data['link']);
                     resolve(data || {statusCode: 200});
                 }
             }
