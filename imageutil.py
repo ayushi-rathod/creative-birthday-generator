@@ -25,6 +25,12 @@ def pasteImage(baseImage, overlayImage, pasteAtXY_tuple):
     baseImage.paste(overlayImage, pasteAtXY_tuple)
     # return baseImage.copy()
 
+def writeEmojis(baseImage, XY, text, fontPath, FONT_SIZE, FONT_COLOR=(0, 0, 0)):
+        draw = ImageDraw.Draw(baseImage)
+        font = ImageFont.truetype(fontPath, FONT_SIZE)
+        draw.text(XY, text,fill=FONT_COLOR, font=font)
+        del draw
+
 def writeGreeting(baseImage, XY, T, fontPath, FONT_SIZE, FONT_COLOR=(0, 0, 0)):
 
     def writeOnImage(baseImage, XY, text, fontPath, FONT_SIZE, FONT_COLOR=(0, 0, 0)):
