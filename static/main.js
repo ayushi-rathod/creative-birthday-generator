@@ -1,4 +1,5 @@
-
+// let serverx = 'http://127.0.0.1:5001'
+var serverx = ''
 /**
  * 
  * @param {string} fileName (album + filename) filename to save as, wrapped in folder. where album is uniquelink
@@ -45,7 +46,7 @@ function uploadPhoto(fileName, AWSAccessKeyId, policy, signature, fileInput) {
 function getSignUrl(name) {
     return new Promise((resolve, reject) => {
         getUrl = {
-            url: "http://127.0.0.1:5001/signed-url-s3",
+            url: serverx+"/signed-url-s3",
             method: "GET",
             data: {
                 "name": name
@@ -67,7 +68,7 @@ function getUniqueLink(
 ) {
     return new Promise((resolve, reject) => {
         var settings = {
-                "url": "http://127.0.0.1:5001/genlink",
+                "url": serverx+"/genlink",
                 "method": "POST",
                 "timeout": 0,
                 "headers": {
@@ -125,9 +126,10 @@ function saveUserInfo(url, bday_photo, user_name, user_email, greeting, user_pho
 }
 
 function triggerUrl(name) {
+    
     return new Promise((resolve, reject) => {
         getUrl = {
-            url: "http://127.0.0.1:5001/trigger",
+            url: serverx+"/trigger",
             method: "GET",
             data: {
                 "name": name
@@ -135,13 +137,37 @@ function triggerUrl(name) {
             statusCode: {
                 200: function (data) {
                     console.log("Request completed 200");
+                    $("#greetingUrl").text('');
+                    $("#greetingUrl").append(
+                        "<a style=\" color: brown\; font-size: medium\; border: blueviolet solid 4px\;\" href=\""+ data['link'] +"\">Click here for the awesomeness!!! </a>"
+                    )
                     resolve(data || {statusCode: 200});
                 }
             }
         }
         
         $.ajax(getUrl)
+        coolStuffRoll('#send_btn')
+        
+
     });
+}
+
+
+function coolStuffRoll(id) {
+    // $(id).attr('Value', "Creating.");
+    // $(id).attr('Value', "Some..");
+    // $(id).attr('Value', "Charm...");
+    setTimeout(function(){
+        $(id).attr('Value', "Creating.");
+    }, 10);
+    setTimeout(function(){
+        $(id).attr('Value', "Some..");
+    }, 10);
+    setTimeout(function(){
+        $(id).attr('Value', "Charm...");
+    }, 10);
+
 }
 
 /**
