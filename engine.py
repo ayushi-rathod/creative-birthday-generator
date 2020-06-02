@@ -11,6 +11,7 @@ import random
 import json
 from connection import Connections
 import awsconfig
+from artifact import createArtifactFor
 
 app = Flask(__name__)
 
@@ -114,6 +115,15 @@ def signedUrlUpload():
     name: str = request.args.get('name')
     print("Request registered to generate picture link.")
     return awsconfig.get_presigned_url(s3_client, name)
+
+@app.route('/trigger', methods = ['GET'])
+def trigger():
+    name: str = request.args.get('name')
+    print("Request registered to create gif and send.")
+    # TODO - check for album with name else send error
+    link = createArtifactFor(s3_client, Connections(connection), name)
+
+    return jsonify({"unilink": name, "link": link})
 
 if __name__ == '__main__':
     s3_client = awsconfig.connect_s3()

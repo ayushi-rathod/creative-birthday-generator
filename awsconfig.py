@@ -4,6 +4,7 @@ import os
 
 secret = {}
 credentials = {}
+BUCKET_NAME = "birthday-engine"
 try:
     secret = json.loads(open('credentials.json').read())
 except FileNotFoundError as err:
@@ -75,7 +76,7 @@ def get_all_s3_files_and_folders(s3_client, all_buckets):
     return all_content
 
 # get all standard files in the bucket
-def get_s3_bucket_contents(s3_client, bucket_name):
+def get_s3_bucket_contents(s3_client, bucket_name = BUCKET_NAME):
     contents_field="Contents"
     bucket_contents = []
 
@@ -137,7 +138,7 @@ def upload_s3_files(s3_client, bucket_name, file_names):
         upload_s3_file(s3_client, bucket_name, file_names[i])
 
 
-def get_presigned_url(s3_client, file_name, bucket_name="birthday-engine"):
+def get_presigned_url(s3_client, file_name, bucket_name=BUCKET_NAME):
     # contentType = file_name.split('.').pop()
     return s3_client.generate_presigned_post(
         Bucket=bucket_name,

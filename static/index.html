@@ -137,6 +137,13 @@
             }
         }
 
+        $("#send_btn").click(async function () {
+                    //TODO
+            console.log("Send button is clicked.")
+            let dt = await triggerUrl($("#bday_email").val().split('@')[0] || window.location.href.split("=")[1]);
+            console.log(dt['link'])
+        });
+
        $(document).ready(function() {
            if (window.location.href.indexOf("bday") != -1) {
                 $("#left-div").hide();
@@ -166,10 +173,6 @@
                         $(".thank-you").show();
                         }
                     }
-                });
-
-                $("#send_btn").click(async function () {
-                    //TODO
                 });
             } else {
                     $("#submitButtonId").click(async function () {
