@@ -24,16 +24,12 @@ def Card_Prep(bday_person_name, user_name, url, card_no, greeting_text): # ,font
     # baseImg = Image.open("All_cards/"+str(card_no)+".jpg")
     baseImg = Image.open("experiment/blank.jpg") # it will be default.
 
-    # bday_person_img = Image.open("experiment/bdayimg.jpg")
-    # print(bday_person_img)
-    # or "experiment/All_cards/"+str(card_no)+".jpg"
-    # print(requests.get(url, stream=True).raw)
-    # bday_person_img = Image.open(requests.get(url, stream=True).raw)
     if 'http' in url:
         response = requests.get(url)
         bday_person_img = Image.open(BytesIO(response.content))
     else:
         bday_person_img = Image.open("experiment/All_cards/"+str(card_no)+".jpg")
+
     img_w, img_h = baseImg.size
 
     bday_person_img = resizeByWidth(bday_person_img, img_w, padding)
