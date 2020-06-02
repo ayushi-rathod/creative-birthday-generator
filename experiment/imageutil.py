@@ -21,6 +21,7 @@ def resizeByHeight(img, toHeight, padding = 20):
     return img.resize((new_width, new_height), Image.ANTIALIAS)
 
 def pasteImage(baseImage, overlayImage, pasteAtXY_tuple):
+    # print("pasteAtXY_tuple")
     baseImage.paste(overlayImage, pasteAtXY_tuple)
     # return baseImage.copy()
 
@@ -38,3 +39,6 @@ def writeGreeting(baseImage, XY, T, fontPath, FONT_SIZE, FONT_COLOR=(0, 0, 0)):
     text = f'Dear {to},\n{txt}\n\t\t\t\t -From {frm}.'
 
     writeOnImage(baseImage, XY, text, fontPath, FONT_SIZE, FONT_COLOR)
+
+def cropImageByHeight(baseImage, height):
+    return baseImage.crop((0, 0, baseImage.size[0], height))
