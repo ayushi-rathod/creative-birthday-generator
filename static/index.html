@@ -46,7 +46,7 @@
               <div style="align-content: center">
                  <h2>Wohoooooo.....!!</h2>
                   <img src="/static/resources/birthday_bash.gif" align="center">
-                  <h2>Your greeting will be ready soon!</h2>
+                  <h2 id="greetingUrl">Your greeting will be ready soon!</h2>
                   <label>If you are excited and would like a early peep-in, click </label>
                   <input type="button" id="send_btn" class="btn btn-primary" title="Send" value="Send">
              </div>
@@ -141,6 +141,8 @@
         $("#send_btn").click(async function () {
                     //TODO
             console.log("Send button is clicked.")
+            // Disable button
+            $('#send_btn').attr('disabled', true);
             let dt = await triggerUrl($("#bday_email").val().split('@')[0] || window.location.href.split("=")[1]);
             console.log(dt['link'])
         });
