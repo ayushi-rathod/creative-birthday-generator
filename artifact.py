@@ -55,6 +55,14 @@ def createArtifactFor(s3_client, mongoconn, name):
         # Create case of default output using some default inputs
         main(name, ['user_names'], ['Happy Birthday!'], ['user_urls'])
         print("Create case of default output")
+    
+    # awsconfig.get
+    bl = awsconfig.upload_s3_file(s3_client, awsconfig.BUCKET_NAME, "output/" + name + ".gif")
+    if bl:
+        return ("https://birthday-engine.s3-us-west-1.amazonaws.com/" + "output/" + name + ".gif")
+    else:
+        return False
+
 
     # name is albumName / unilink.
     # get album from aws

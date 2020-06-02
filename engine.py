@@ -121,9 +121,9 @@ def trigger():
     name: str = request.args.get('name')
     print("Request registered to create gif and send.")
     # TODO - check for album with name else send error
-    createArtifactFor(s3_client, Connections(connection), name)
+    link = createArtifactFor(s3_client, Connections(connection), name)
 
-    return jsonify({"unilink": name})
+    return jsonify({"unilink": name, "link": link})
 
 if __name__ == '__main__':
     s3_client = awsconfig.connect_s3()
