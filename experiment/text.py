@@ -1,7 +1,6 @@
 from PIL import Image
 from PIL import ImageFont
 from PIL import ImageDraw
-# from resizeimage import resizeimage
 
 from imageutil import resizeByWidth, pasteImage, writeGreeting, cropImageByHeight
 from textutil import breakTextIntoLines
@@ -25,7 +24,6 @@ def Card_Prep(bday_person_name, user_name, card_no, greeting_text): # ,font_path
     bday_person_img = Image.open("bdayimg.jpg")
     b_w, b_h = bday_person_img.size
     img_w, img_h = baseImg.size
-    # bday_person_img = resizeimage.resize_height(bday_person_img, (img_h - 50))
     print()
 
     bday_person_img = resizeByWidth(bday_person_img, img_w, padding)
@@ -69,16 +67,17 @@ def Card_Prep(bday_person_name, user_name, card_no, greeting_text): # ,font_path
     # writeGreeting(baseImg, (100, 2170), (bday_person_name, greeting_text, user_name), fontPath, FONT_SIZE)
 
     print()
-    baseImg.save('output/test.jpg', "JPEG")
+    # baseImg.save('output/test.jpg', "JPEG")
 
     # 
 
-    draw = ImageDraw.Draw(baseImg)
+    # draw = ImageDraw.Draw(baseImg)
 
-    font = ImageFont.truetype(fontPath, FONT_SIZE)
-    draw.text((100, 2170), f'Dear {bday_person_name},\n{greeting_text}\n     '
-                           f'                                -From {user_name}.',(0, 0, 0), font=font)
-    baseImg.save(f'output/{bday_person_name}.jpg')
+    # font = ImageFont.truetype(fontPath, FONT_SIZE)
+    # draw.text((100, 2170), f'Dear {bday_person_name},\n{greeting_text}\n     '
+    #                        f'                                -From {user_name}.',(0, 0, 0), font=font)
+    # baseImg.save(f'output/{bday_person_name}.jpg')
+    return baseImg
     print(f'{bday_person_name} saved!')
 
 path, dirs, files = next(os.walk("All_cards"))
@@ -92,25 +91,31 @@ file_count = len(files)
 #     all_name = [row for row in csv.reader(f,delimiter=',')]
 
 
-def main(bday_person_name, user_name, greeting_text):
+# def main(bday_person_name, user_name, greeting_text):
+def main(bday_person_name, user_names, greeting_texts):
     # rand_quotes = random.randint(1, len(quotes))
     # rand_quotes = "This is a greeting from a brother. Happy Birthdayy my bro."
     rand_card = random.randint(1, file_count)
     # rand_font = random.randint(0, file_count1-1)
     # rand_font = 'All_font/Great Wishes.otf'
     # print(bday_person_name, user_name, rand_card, greeting_text) #, files1[rand_font])
-    Card_Prep(bday_person_name, user_name, rand_card, greeting_text) # , path1 + '/' + files1[rand_font])
+    img = []
+    for user_name, greeting_text in zip(user_names, greeting_texts):
+        img.append(Card_Prep(bday_person_name, user_name, rand_card, greeting_text)) # , path1 + '/' + files1[rand_font])
+
+    img[0].save(f'output/{bday_person_name}.gif', save_all=True, append_images=img[1:], duration=1300, loop=0)
+
     # print(bday_person_name, rand_card, rand_quotes, rand_font)
     # Card_Prep(str(bday_person_name), rand_card, quotes[rand_quotes], rand_font)
     print("Done for {bday_person_name}".format(bday_person_name = bday_person_name))
 #
 
 bday_person_name = "Prateek"
-user_name = "UserFriend"
-greeting_text = "This is a greeting from a brother. Happy Birthdayy my bro."
+user_names = ["UserFriend", "UserFriend2", "UserFriend3"]  
+greeting_texts = ["This is a greeting from a brother. Happy Birthdayy my bro.", "this is second message", "this is third message"]
 # greeting_text = "Prateek UserFriend 10 This is a greeting from a brother. Happy Birthdayy my bro. Prateek UserFriend 10 This is a greeting from a brother. Happy Birthdayy my bro. \
 # Prateek UserFriend 10 This is a greeting from a brother.Happy Birthdayy my bro. Prateek UserFriend 10 This is a greeting from a brother.Happy Birthdayy my bro. Prateek UserFriend 10 \
 # This is a greeting from a brother.Happy Birthdayy my bro. Prateek UserFriend 10 This is a greeting from a brother.Happy Birthdayy my bro. Prateek UserFriend 10 This is a greeting from \
 # a brother.. Prateek UserFriend 10 This is a greeting from a brother.. Prateek UserFriend 10 This is a greeting from a brother. . Prateek UserFriend 10 This is a greeting from a brother. . Prateek UserFriend 10 This is a greeting from a brother."
 
-main(bday_person_name, user_name, greeting_text)
+main(bday_person_name, user_names, greeting_texts)

@@ -36,7 +36,8 @@ def writeGreeting(baseImage, XY, T, fontPath, FONT_SIZE, FONT_COLOR=(0, 0, 0)):
 
     to, txt, frm = T
     # txt - break to a specific character length
-    text = f'Dear {to},\n{txt}\n\t\t\t\t -From {frm}.'
+    blanks = ' '.join(['']*(65- 10 - len(frm)))
+    text = f'Dear {to},\n{txt}\n{blanks} -From {frm}.'
 
     writeOnImage(baseImage, XY, text, fontPath, FONT_SIZE, FONT_COLOR)
 

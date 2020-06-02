@@ -5,4 +5,3 @@ gevent
 requests
 pprint
 pillow
-reportlab
