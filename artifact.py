@@ -49,7 +49,12 @@ def createArtifactFor(s3_client, mongoconn, name):
     print(name)
     print()
     print(userx)
-    main(name, user_names, greeting_texts, user_urls)
+    if len(userx) > 0:
+        main(name, user_names, greeting_texts, user_urls)
+    else:
+        # Create case of default output using some default inputs
+        main(name, ['user_names'], ['Happy Birthday!'], ['user_urls'])
+        print("Create case of default output")
 
     # name is albumName / unilink.
     # get album from aws

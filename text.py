@@ -53,7 +53,7 @@ def Card_Prep(bday_person_name, user_name, url, card_no, greeting_text): # ,font
 
         else:
             # crops height if crop is less than 50%.
-            bday_person_img = cropImageByHeight(bday_person_img, (img_h - text_h - (2 * padding)))
+            bday_person_img = cropImageByHeight(bday_person_img, (img_h - text_h - (4 * padding)))
             pasteImage(baseImg, bday_person_img, (padding//2, padding//2))
     else:
         # General case
